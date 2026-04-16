@@ -1,0 +1,138 @@
+============================================================
+  BIAS BREAKERS — Setup & Run Commands
+  Project: AI Fairness Auditing Platform
+  GitHub : https://github.com/sainath1754/Bias-Breakers
+============================================================
+
+─────────────────────────────────────────
+  STEP 1 — PREREQUISITES
+─────────────────────────────────────────
+  Make sure you have installed:
+    • Python 3.9 or higher
+    • pip (comes with Python)
+    • Git
+    • VS Code (recommended)
+
+─────────────────────────────────────────
+  STEP 2 — OPEN PROJECT IN VS CODE
+─────────────────────────────────────────
+  File → Open Folder → select the bias-breakers folder
+  Then open a new terminal: Terminal → New Terminal
+
+─────────────────────────────────────────
+  STEP 3 — CREATE VIRTUAL ENVIRONMENT
+─────────────────────────────────────────
+
+  Windows:
+    python -m venv venv
+    venv\Scripts\activate
+
+  Mac / Linux:
+    python3 -m venv venv
+    source venv/bin/activate
+
+  You should see (venv) in your terminal prompt.
+
+─────────────────────────────────────────
+  STEP 4 — INSTALL DEPENDENCIES
+─────────────────────────────────────────
+
+    pip install -r requirements.txt
+
+  This installs: fastapi, uvicorn, pandas, numpy, scikit-learn
+
+─────────────────────────────────────────
+  STEP 5 — GENERATE THE DATASET
+─────────────────────────────────────────
+
+    python generate_dataset.py
+
+  This creates: datasets/indiahire_bias.csv (5,000 records)
+  You will see a summary printed with bias statistics.
+
+─────────────────────────────────────────
+  STEP 6 — RUN THE SERVER
+─────────────────────────────────────────
+
+    uvicorn main:app --reload
+
+  Server starts at: http://127.0.0.1:8000
+  Open that URL in your browser to see the app.
+
+  API docs available at: http://127.0.0.1:8000/docs
+
+  To stop the server: press Ctrl + C
+
+─────────────────────────────────────────
+  STEP 7 — USING THE APP
+─────────────────────────────────────────
+
+  1. Open http://127.0.0.1:8000 in your browser
+  2. Click "Run Audit Now" to analyse the IndiaHire dataset
+  3. View bias metrics, feature charts, and before/after fix
+  4. Scroll to "Upload Your Dataset" to test your own CSV
+     (CSV must have: gender column (0/1) and hiring_decision column (0/1))
+
+─────────────────────────────────────────
+  STEP 8 — PUSH TO GITHUB
+─────────────────────────────────────────
+
+  Run these commands in order in the VS Code terminal:
+
+    git init
+    git add .
+    git commit -m "feat: initial commit — Bias Breakers v1.0"
+    git branch -M main
+    git remote add origin https://github.com/sainath1754/Bias-Breakers.git
+    git push -u origin main
+
+  If you get a credentials error, run:
+    git config --global user.email "your@email.com"
+    git config --global user.name "Your Name"
+  Then repeat the push command.
+
+─────────────────────────────────────────
+  API ENDPOINTS REFERENCE
+─────────────────────────────────────────
+
+  GET  /              → Serves the web application
+  GET  /api/health    → Health check  {status: "ok"}
+  GET  /api/demo      → Runs analysis on IndiaHire dataset
+  POST /api/analyze   → Accepts CSV file upload, returns bias report
+
+─────────────────────────────────────────
+  PROJECT STRUCTURE
+─────────────────────────────────────────
+
+  bias-breakers/
+  ├── main.py                 ← FastAPI application entry point
+  ├── bias_engine.py          ← ML bias detection and mitigation logic
+  ├── generate_dataset.py     ← Generates IndiaHire-Bias CSV
+  ├── requirements.txt        ← Python dependencies
+  ├── commands.txt            ← This file
+  ├── README.md               ← Project documentation
+  ├── .gitignore              ← Git ignore rules
+  ├── static/
+  │   └── index.html          ← Frontend web application
+  └── datasets/
+      └── indiahire_bias.csv  ← Generated dataset (after Step 5)
+
+─────────────────────────────────────────
+  TROUBLESHOOTING
+─────────────────────────────────────────
+
+  "Dataset not found" error:
+    → Run: python generate_dataset.py
+
+  "Module not found" error:
+    → Make sure venv is activated (see Step 3)
+    → Run: pip install -r requirements.txt
+
+  Port 8000 already in use:
+    → Run: uvicorn main:app --reload --port 8001
+    → Open: http://127.0.0.1:8001
+
+  Charts not showing:
+    → Make sure you have internet access (Chart.js loads from CDN)
+
+============================================================
