@@ -92,6 +92,172 @@ class BiasEngine:
                 w[idx] = exp / obs if obs > 0 else 1.0
         return w
 
+    # ── Train a persistent model on the full dataset ─────────────────────────
+    def _train_models(self, df: pd.DataFrame,
+                      target: str, protected: str, priv_val):
+        """Returns (biased_model, fair_model, scaler, encoders, feature_cols)."""
+        work  = df.drop(columns=["actual_performance_score"], errors="ignore").copy()
+        feats = [c for c in work.columns if c != target]
+
+        enc_df = self._encode(work[feats + [target]])
+        X = enc_df[feats].values
+        y = enc_df[target].values
+
+        sc = StandardScaler()
+        Xs = sc.fit_transform(X)
+
+        # Biased model — plain fit
+        biased = LogisticRegression(max_iter=1000, random_state=42, C=1.0)
+        biased.fit(Xs, y)
+
+        # Fair model — reweighed fit
+        weights = self._reweigh(work, target, protected, priv_val)
+        fair    = LogisticRegression(max_iter=1000, random_state=42, C=1.0)
+        fair.fit(Xs, y, sample_weight=weights)
+
+        return biased, fair, sc, self.label_encoders.copy(), feats
+
+    # ── Predict for a single student ─────────────────────────────────────────
+    def predict_student(self,
+                        student: dict,
+                        df: pd.DataFrame,
+                        target_col:     str = "hiring_decision",
+                        protected_col:  str = "gender",
+                        privileged_val: int = 1) -> dict:
+        """
+        Takes one student dict, returns:
+          - biased_decision  (what the biased model says)
+          - fair_decision    (what the de-biased model says)
+          - confidence       (probability of selection)
+          - rejection_reasons (human-readable list)
+          - bias_factors     (which protected attributes hurt them)
+          - improvements     (actionable suggestions on fair features)
+        """
+        # ── Train models ──────────────────────────────────────────────────────
+        biased_m, fair_m, sc, les, feats = self._train_models(
+            df, target_col, protected_col, privileged_val
+        )
+
+        # ── Encode student row ────────────────────────────────────────────────
+        row = {}
+        for f in feats:
+            val = student.get(f, 0)
+            if f in les:
+                le = les[f]
+                val_str = str(val)
+                if val_str in le.classes_:
+                    val = int(le.transform([val_str])[0])
+                else:
+                    val = 0
+            row[f] = val
+
+        X_s = sc.transform([[row[f] for f in feats]])
+
+        biased_prob = float(biased_m.predict_proba(X_s)[0][1])
+        fair_prob   = float(fair_m.predict_proba(X_s)[0][1])
+        biased_dec  = int(biased_prob >= 0.5)
+        fair_dec    = int(fair_prob   >= 0.5)
+
+        # ── Feature contributions for this student ────────────────────────────
+        coef     = biased_m.coef_[0]                     # raw coefficients
+        x_vals   = X_s[0]                                # scaled feature values
+        contrib  = coef * x_vals                         # signed contributions
+        total_c  = np.abs(contrib).sum() or 1.0
+        contrib_pct = (contrib / total_c * 100).round(1)
+
+        factor_map = dict(zip(feats, contrib_pct.tolist()))
+
+        # ── Bias factors ──────────────────────────────────────────────────────
+        PROTECTED = {"gender", "state_of_origin", "institution_tier",
+                     "gap_years", "referral", "age"}
+        LABELS = {
+            "gender":           "Gender",
+            "state_of_origin":  "State / City Tier",
+            "institution_tier": "College Tier",
+            "gap_years":        "Career Gap",
+            "referral":         "No Referral",
+            "age":              "Age",
+        }
+        bias_factors = []
+        for f in PROTECTED:
+            if f in factor_map and factor_map[f] < -2.0:
+                bias_factors.append({
+                    "factor":  LABELS.get(f, f),
+                    "field":   f,
+                    "impact":  round(abs(factor_map[f]), 1),
+                    "note":    _bias_note(f, student.get(f)),
+                })
+        bias_factors.sort(key=lambda x: x["impact"], reverse=True)
+
+        # ── Rejection reasons ─────────────────────────────────────────────────
+        rejection_reasons = []
+        if biased_dec == 0:
+            # Check each feature contribution
+            for f, pct in sorted(factor_map.items(), key=lambda x: x[1]):
+                if pct < -3.0:
+                    rejection_reasons.append(_rejection_reason(f, student.get(f), pct))
+
+        # ── Improvement suggestions (only non-protected) ──────────────────────
+        IMPROVABLE = {
+            "skills_score":      ("Skills Score",        "Improve technical skills — aim for 80+. Consider online certifications."),
+            "experience_years":  ("Experience",          "Gain more relevant work experience or internships."),
+            "communication_score":("Communication Score","Improve communication — practice mock interviews, public speaking."),
+        }
+        improvements = []
+        for f, (label, tip) in IMPROVABLE.items():
+            val = student.get(f, 0)
+            if isinstance(val, (int, float)) and val < 70:
+                improvements.append({
+                    "field":       f,
+                    "label":       label,
+                    "current_val": round(float(val), 1),
+                    "target_val":  80,
+                    "tip":         tip,
+                })
+
+        return {
+            "biased_decision":  biased_dec,
+            "fair_decision":    fair_dec,
+            "biased_prob":      round(biased_prob * 100, 1),
+            "fair_prob":        round(fair_prob   * 100, 1),
+            "bias_changed_outcome": biased_dec != fair_dec,
+            "rejection_reasons": rejection_reasons[:4],
+            "bias_factors":      bias_factors[:4],
+            "improvements":      improvements,
+            "top_features":      sorted(
+                [{"feature": f, "contribution": v} for f, v in factor_map.items()],
+                key=lambda x: x["contribution"]
+            )[:5],
+        }
+
+
+def _bias_note(field: str, value) -> str:
+    notes = {
+        "gender":          "Female candidates face a systemic 34% lower selection probability.",
+        "state_of_origin": f"Candidates from {value or 'Tier-2/3'} cities face geographic bias.",
+        "institution_tier":f"{value or 'Non-IIT/NIT'} graduates face institutional prestige bias.",
+        "gap_years":        "Career gaps disproportionately penalise women (maternity/care leave).",
+        "referral":         "Lack of referral disadvantages candidates with smaller professional networks.",
+        "age":              "Candidates above 35 face age-based discrimination.",
+    }
+    return notes.get(field, "Protected attribute contributing to bias.")
+
+
+def _rejection_reason(field: str, value, pct: float) -> str:
+    templates = {
+        "gender":           f"Gender (Female) reduced selection probability by ~{abs(pct):.0f}%.",
+        "state_of_origin":  f"Location ({value}) penalised vs metro candidates (~{abs(pct):.0f}% impact).",
+        "institution_tier": f"College tier ({value}) hurt selection chances (~{abs(pct):.0f}% impact).",
+        "gap_years":        f"Career gap of {value} year(s) penalised by model (~{abs(pct):.0f}% impact).",
+        "skills_score":     f"Skills score below average reduced selection probability (~{abs(pct):.0f}% impact).",
+        "communication_score": f"Communication score below average (~{abs(pct):.0f}% impact).",
+        "referral":         f"No referral — reduces selection probability (~{abs(pct):.0f}% impact).",
+        "age":              f"Age ({value}) flagged as negative factor (~{abs(pct):.0f}% impact).",
+        "experience_years": f"Limited experience reduced selection probability (~{abs(pct):.0f}% impact).",
+    }
+    return templates.get(field, f"{field}: contributing factor (~{abs(pct):.0f}% impact).")
+
+
     # ── Public API ────────────────────────────────────────────────────────────
     def full_analysis(self,
                       df: pd.DataFrame,

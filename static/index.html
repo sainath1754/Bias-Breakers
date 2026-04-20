@@ -479,6 +479,88 @@
     .about-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
     .about-desc { font-size: 13.5px; color: var(--text-3); line-height: 1.6; }
 
+    /* ── FORM ELEMENTS ───────────────────────────────────────────────── */
+    .form-label {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12.5px; font-weight: 600; color: var(--text-2);
+      margin-bottom: 6px;
+    }
+    .form-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 500; color: var(--blue);
+    }
+    .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+    .form-range {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    .form-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--blue);
+      border: 2px solid var(--white);
+      box-shadow: 0 0 0 2px var(--blue);
+      cursor: pointer;
+    }
+
+    /* ── VERDICT CARDS ────────────────────────────────────────────────── */
+    .verdict {
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 12px;
+    }
+    .verdict-rejected { background: var(--red-light);   border: 1px solid #fecaca; }
+    .verdict-selected { background: var(--green-light);  border: 1px solid #bbf7d0; }
+    .verdict-neutral  { background: var(--blue-light);   border: 1px solid var(--blue-mid); }
+    .verdict-icon  { font-size: 28px; line-height:1; flex-shrink:0; }
+    .verdict-title { font-size: 15px; font-weight: 700; }
+    .verdict-sub   { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+
+    .reason-list { list-style:none; display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+    .reason-item {
+      display:flex; align-items:flex-start; gap:10px;
+      font-size:13px; color:var(--text-2);
+      background:var(--white); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:10px 12px;
+    }
+    .reason-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+    .dot-red    { background:var(--red); }
+    .dot-amber  { background:var(--amber); }
+    .dot-blue   { background:var(--blue); }
+    .dot-green  { background:var(--green); }
+
+    .improve-card {
+      background: var(--blue-light);
+      border: 1px solid var(--blue-mid);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-top: 6px;
+    }
+    .improve-title { font-size:12.5px; font-weight:600; color:var(--blue); margin-bottom:4px; }
+    .improve-bar-wrap { height:5px; background:var(--border); border-radius:3px; margin-top:6px; }
+    .improve-bar { height:100%; border-radius:3px; background:var(--blue); transition:width .5s ease; }
+
     /* ── HIDDEN ──────────────────────────────────────────────────────── */
     .hidden { display: none !important; }
 
@@ -510,6 +592,7 @@
       <span class="nav-logo-text">Bias Breakers</span>
     </a>
     <div class="nav-links">
+      <a class="nav-link" href="#predict">Predict</a>
       <a class="nav-link" href="#demo">Demo</a>
       <a class="nav-link" href="#upload">Upload</a>
       <a class="nav-link" href="#about">About</a>
@@ -589,6 +672,145 @@
     </div>
   </div>
 </div>
+
+<!-- ── STUDENT PREDICTOR ─────────────────────────────────────────────── -->
+<section style="background:var(--white); border-bottom:1px solid var(--border);" id="predict">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-tag">Student Evaluator</div>
+      <h2>Check Your Selection Chances</h2>
+      <p class="section-sub">
+        Enter a student's details. The model predicts selection outcome,
+        explains every rejection reason, and shows what bias is at play.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+
+      <!-- Left — inputs -->
+      <div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+          <!-- Name -->
+          <div style="grid-column:1/-1;">
+            <label class="form-label">Student Name <span style="color:var(--text-4);font-weight:400">(for display)</span></label>
+            <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma" />
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label class="form-label">Gender</label>
+            <select class="form-input" id="f-gender">
+              <option value="0">Female</option>
+              <option value="1" selected>Male</option>
+            </select>
+          </div>
+
+          <!-- Age -->
+          <div>
+            <label class="form-label">Age</label>
+            <input class="form-input" type="number" id="f-age" value="24" min="18" max="50" />
+          </div>
+
+          <!-- State -->
+          <div>
+            <label class="form-label">City / State Tier</label>
+            <select class="form-input" id="f-state">
+              <option value="Metro">Metro (Delhi / Mumbai / Bengaluru)</option>
+              <option value="Tier2" selected>Tier 2 City</option>
+              <option value="Tier3">Tier 3 City / Rural</option>
+            </select>
+          </div>
+
+          <!-- Institution -->
+          <div>
+            <label class="form-label">College Tier</label>
+            <select class="form-input" id="f-institution">
+              <option value="IIT_NIT">IIT / NIT</option>
+              <option value="Tier2_College" selected>Tier 2 College</option>
+              <option value="Tier3_College">Tier 3 / Private College</option>
+            </select>
+          </div>
+
+          <!-- Skills -->
+          <div style="grid-column:1/-1;">
+            <label class="form-label">
+              Skills Score
+              <span class="form-hint" id="skills-display">75 / 100</span>
+            </label>
+            <input class="form-range" type="range" id="f-skills" min="0" max="100" value="75"
+              oninput="document.getElementById('skills-display').textContent=this.value+' / 100'" />
+          </div>
+
+          <!-- Communication -->
+          <div style="grid-column:1/-1;">
+            <label class="form-label">
+              Communication Score
+              <span class="form-hint" id="comm-display">65 / 100</span>
+            </label>
+            <input class="form-range" type="range" id="f-comm" min="0" max="100" value="65"
+              oninput="document.getElementById('comm-display').textContent=this.value+' / 100'" />
+          </div>
+
+          <!-- Experience -->
+          <div>
+            <label class="form-label">Experience (years)</label>
+            <input class="form-input" type="number" id="f-exp" value="2" min="0" max="20" />
+          </div>
+
+          <!-- Gap years -->
+          <div>
+            <label class="form-label">Career Gap (years)</label>
+            <input class="form-input" type="number" id="f-gap" value="0" min="0" max="10" />
+          </div>
+
+          <!-- Referral -->
+          <div style="grid-column:1/-1;">
+            <label class="form-label">Do you have a referral?</label>
+            <select class="form-input" id="f-referral">
+              <option value="0" selected>No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button class="btn btn-primary" style="margin-top:20px;width:100%;justify-content:center;" id="predict-btn" onclick="runPredict()">
+          Analyse This Student →
+        </button>
+        <div class="alert alert-error" id="predict-error" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- Right — result panel -->
+      <div>
+        <!-- Placeholder state -->
+        <div id="predict-placeholder" style="
+          height:100%; min-height:340px;
+          border:2px dashed var(--border-2);
+          border-radius:var(--radius);
+          display:flex; flex-direction:column;
+          align-items:center; justify-content:center;
+          text-align:center; padding:32px; gap:10px;
+          color:var(--text-3);">
+          <div style="font-size:36px;">👤</div>
+          <div style="font-weight:600;">Results appear here</div>
+          <div style="font-size:13px;">Fill in the student details and click Analyse</div>
+        </div>
+
+        <!-- Loader -->
+        <div id="predict-loader" style="display:none; text-align:center; padding:48px;">
+          <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px;"></div>
+          <div style="font-size:13px;color:var(--text-3);">Running bias-aware prediction…</div>
+        </div>
+
+        <!-- Result -->
+        <div id="predict-result" style="display:none;"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- ── DEMO SECTION ───────────────────────────────────────────────────── -->
 <section class="results-section" id="demo">
@@ -968,7 +1190,178 @@
     }
   }
 
-  // ── Demo ──────────────────────────────────────────────────────────────────
+  // ── Student Predictor ─────────────────────────────────────────────────────
+  async function runPredict() {
+    const btn = $('predict-btn');
+    $('predict-error').style.display = 'none';
+    $('predict-placeholder').style.display = 'none';
+    $('predict-result').style.display     = 'none';
+    $('predict-loader').style.display     = 'block';
+    btn.disabled = true; btn.textContent = 'Analysing…';
+
+    const student = {
+      name:                $('f-name').value.trim() || 'Candidate',
+      gender:              parseInt($('f-gender').value),
+      age:                 parseInt($('f-age').value),
+      state_of_origin:     $('f-state').value,
+      institution_tier:    $('f-institution').value,
+      skills_score:        parseFloat($('f-skills').value),
+      communication_score: parseFloat($('f-comm').value),
+      experience_years:    parseInt($('f-exp').value),
+      gap_years:           parseInt($('f-gap').value),
+      referral:            parseInt($('f-referral').value),
+    };
+
+    try {
+      const res  = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(student),
+      });
+      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
+      const data = await res.json();
+      $('predict-loader').style.display = 'none';
+      renderPrediction(data, student);
+    } catch (e) {
+      $('predict-loader').style.display = 'none';
+      $('predict-placeholder').style.display = 'flex';
+      $('predict-error').style.display = 'block';
+      $('predict-error').textContent = 'Error: ' + e.message;
+    }
+
+    btn.disabled = false; btn.textContent = 'Analyse This Student →';
+  }
+
+  function renderPrediction(d, student) {
+    const name    = student.name || 'Candidate';
+    const biased  = d.biased_decision === 1;
+    const fair    = d.fair_decision   === 1;
+    const changed = d.bias_changed_outcome;
+
+    // ── Verdict blocks ──────────────────────────────────────────────────────
+    const verdictBiased = biased
+      ? `<div class="verdict verdict-selected">
+           <div class="verdict-icon">✅</div>
+           <div>
+             <div class="verdict-title" style="color:var(--green)">SELECTED — ${d.biased_prob}% confidence</div>
+             <div class="verdict-sub">Biased model prediction — ${name} would be hired.</div>
+           </div>
+         </div>`
+      : `<div class="verdict verdict-rejected">
+           <div class="verdict-icon">❌</div>
+           <div>
+             <div class="verdict-title" style="color:var(--red)">REJECTED — ${d.biased_prob}% selection probability</div>
+             <div class="verdict-sub">Current biased model would reject ${name}.</div>
+           </div>
+         </div>`;
+
+    const verdictFair = changed
+      ? (fair
+          ? `<div class="verdict verdict-selected">
+               <div class="verdict-icon">⚖️</div>
+               <div>
+                 <div class="verdict-title" style="color:var(--green)">SELECTED after bias removal — ${d.fair_prob}% confidence</div>
+                 <div class="verdict-sub">${name} should have been selected. Bias caused an unfair rejection.</div>
+               </div>
+             </div>`
+          : `<div class="verdict verdict-neutral">
+               <div class="verdict-icon">⚖️</div>
+               <div>
+                 <div class="verdict-title" style="color:var(--blue)">Rejected even after bias removal — ${d.fair_prob}%</div>
+                 <div class="verdict-sub">Rejection is not due to bias — it reflects actual merit factors.</div>
+               </div>
+             </div>`)
+      : `<div class="verdict verdict-neutral">
+           <div class="verdict-icon">⚖️</div>
+           <div>
+             <div class="verdict-title" style="color:var(--blue)">Fair model agrees — ${d.fair_prob}% confidence</div>
+             <div class="verdict-sub">Bias removal did not change the outcome. Decision is merit-based.</div>
+           </div>
+         </div>`;
+
+    // ── Rejection reasons ──────────────────────────────────────────────────
+    let reasonsHtml = '';
+    if (!biased && d.rejection_reasons.length) {
+      const items = d.rejection_reasons.map(r =>
+        `<li class="reason-item"><span class="reason-dot dot-red"></span>${r}</li>`
+      ).join('');
+      reasonsHtml = `
+        <div style="margin-bottom:16px">
+          <div class="card-title" style="margin-bottom:8px">Why Rejected</div>
+          <ul class="reason-list">${items}</ul>
+        </div>`;
+    }
+
+    // ── Bias factors ───────────────────────────────────────────────────────
+    let biasHtml = '';
+    if (d.bias_factors.length) {
+      const items = d.bias_factors.map(b =>
+        `<li class="reason-item">
+          <span class="reason-dot dot-amber"></span>
+          <div>
+            <div style="font-weight:600;font-size:13px">${b.factor} <span style="color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:11px">${b.impact}% impact</span></div>
+            <div style="color:var(--text-3);font-size:12px;margin-top:2px">${b.note}</div>
+          </div>
+        </li>`
+      ).join('');
+      biasHtml = `
+        <div style="margin-bottom:16px">
+          <div class="card-title" style="margin-bottom:8px">Where Bias Was Eliminated</div>
+          <ul class="reason-list">${items}</ul>
+        </div>`;
+    } else {
+      biasHtml = `
+        <div style="margin-bottom:16px">
+          <div class="callout callout-green">
+            <div class="callout-icon">✅</div>
+            <div><div class="callout-title" style="color:var(--green)">No significant bias factors detected</div>
+            <div class="callout-body">The model's decision is driven by merit-based signals.</div></div>
+          </div>
+        </div>`;
+    }
+
+    // ── Improvements ───────────────────────────────────────────────────────
+    let improveHtml = '';
+    if (d.improvements.length) {
+      const items = d.improvements.map(imp => `
+        <div class="improve-card">
+          <div class="improve-title">
+            ${imp.label}
+            <span style="font-weight:400;color:var(--text-3)">${imp.current_val} → target ${imp.target_val}</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text-2)">${imp.tip}</div>
+          <div class="improve-bar-wrap">
+            <div class="improve-bar" style="width:${imp.current_val}%"></div>
+          </div>
+        </div>`
+      ).join('');
+      improveHtml = `
+        <div>
+          <div class="card-title" style="margin-bottom:8px">What to Improve to Boost Chances</div>
+          ${items}
+        </div>`;
+    } else {
+      improveHtml = `
+        <div class="callout callout-blue">
+          <div class="callout-icon">💡</div>
+          <div><div class="callout-title" style="color:var(--blue)">Skills look strong</div>
+          <div class="callout-body">Merit-based factors are above average. Focus on removing bias barriers.</div></div>
+        </div>`;
+    }
+
+    $('predict-result').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:0">
+        ${verdictBiased}
+        ${verdictFair}
+        <div style="height:16px"></div>
+        ${reasonsHtml}
+        ${biasHtml}
+        ${improveHtml}
+      </div>
+    `;
+    $('predict-result').style.display = 'block';
+  }
+</script>
   let demoLoaded = false;
   async function runDemo() {
     if (demoLoaded) return;

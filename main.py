@@ -56,6 +56,23 @@ async def run_demo():
     return result
 
 
+@app.post("/api/predict")
+async def predict_student(student: dict):
+    """
+    Accepts a single student dict, returns biased decision, fair decision,
+    rejection reasons, bias factors, and improvement suggestions.
+    """
+    path = os.path.join(os.path.dirname(__file__), "datasets", "indiahire_bias.csv")
+    if not os.path.exists(path):
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset missing. Run:  python generate_dataset.py"
+        )
+    df     = pd.read_csv(path)
+    result = engine.predict_student(student, df)
+    return result
+
+
 @app.post("/api/analyze")
 async def analyze_upload(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".csv"):
