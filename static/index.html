@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bias Breakers — AI Fairness Auditor</title>
+  <meta name="description" content="Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models. Upload any dataset and get a full fairness audit in seconds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,6 +22,8 @@
       --red-light:   #fef2f2;
       --amber:       #d97706;
       --amber-light: #fffbeb;
+      --purple:      #7c3aed;
+      --purple-light:#f5f3ff;
       --text:        #111827;
       --text-2:      #374151;
       --text-3:      #6b7280;
@@ -166,6 +169,11 @@
       box-shadow: var(--shadow-sm);
     }
     .btn-outline:hover { background: var(--bg); border-color: #b0b7c3; }
+    .btn-purple {
+      background: var(--purple); color: #fff;
+      box-shadow: 0 1px 3px rgba(124,58,237,.3);
+    }
+    .btn-purple:hover { background: #6d28d9; transform: translateY(-1px); }
 
     /* Hero card */
     .hero-card {
@@ -218,7 +226,7 @@
     }
     .stats-inner {
       max-width: 1100px; margin: 0 auto; padding: 0 24px;
-      display: grid; grid-template-columns: repeat(3,1fr);
+      display: grid; grid-template-columns: repeat(4,1fr);
       gap: 1px; background: rgba(255,255,255,.2);
     }
     .stat-item {
@@ -306,6 +314,7 @@
     .badge-fail   { background: var(--red-light);   color: var(--red); }
     .badge-warn   { background: var(--amber-light);  color: var(--amber); }
     .badge-pass   { background: var(--green-light);  color: var(--green); }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
 
     /* ── CHART AREA ──────────────────────────────────────────────────── */
     .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
@@ -422,6 +431,7 @@
     .callout-red   { background: var(--red-light);   border: 1px solid #fecaca; }
     .callout-green { background: var(--green-light);  border: 1px solid #bbf7d0; }
     .callout-blue  { background: var(--blue-light);   border: 1px solid var(--blue-mid); }
+    .callout-purple{ background: var(--purple-light); border: 1px solid #c4b5fd; }
     .callout-icon  { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
     .callout-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
     .callout-body  { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
@@ -561,8 +571,120 @@
     .improve-bar-wrap { height:5px; background:var(--border); border-radius:3px; margin-top:6px; }
     .improve-bar { height:100%; border-radius:3px; background:var(--blue); transition:width .5s ease; }
 
+    /* ── SCENARIO COMPARE ────────────────────────────────────────────── */
+    .compare-section {
+      background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 50%, #f0fdf4 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .compare-profile {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .compare-profile h3 {
+      font-size: 14px; font-weight: 600;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .compare-vs {
+      display: flex; align-items: center; justify-content: center;
+      padding-top: 40px;
+    }
+    .compare-vs-badge {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--purple);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+      box-shadow: 0 4px 12px rgba(124,58,237,.3);
+    }
+    .compare-result {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-top: 24px;
+    }
+    .compare-result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    /* ── MODEL DETAILS ───────────────────────────────────────────────── */
+    .model-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .model-detail-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+    .model-detail-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px; font-weight: 700;
+      color: var(--blue);
+    }
+    .model-detail-label {
+      font-size: 11px; font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-top: 4px;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────────────────── */
+    .footer {
+      background: var(--text);
+      color: rgba(255,255,255,.6);
+      padding: 40px 0;
+      text-align: center;
+    }
+    .footer-title {
+      font-family: 'Lora', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .footer-sub { font-size: 13px; }
+    .footer-links {
+      margin-top: 16px;
+      display: flex; gap: 20px; justify-content: center;
+    }
+    .footer-links a {
+      font-size: 13px; color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-links a:hover { color: #fff; }
+
     /* ── HIDDEN ──────────────────────────────────────────────────────── */
     .hidden { display: none !important; }
+
+    /* ── ANIMATIONS ──────────────────────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeInUp .5s ease forwards; }
 
     /* ── RESPONSIVE ──────────────────────────────────────────────────── */
     @media (max-width: 900px) {
@@ -573,12 +695,16 @@
       .charts-grid { grid-template-columns: 1fr; }
       .ba-grid { grid-template-columns: 1fr; }
       .ba-arrow { display: none; }
-      .stats-inner { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
       .about-grid { grid-template-columns: 1fr; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .compare-vs { padding: 0; }
+      .model-detail-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
       .metric-grid { grid-template-columns: 1fr; }
       .nav-links .nav-link { display: none; }
+      .stats-inner { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -593,6 +719,7 @@
     </a>
     <div class="nav-links">
       <a class="nav-link" href="#predict">Predict</a>
+      <a class="nav-link" href="#compare">Compare</a>
       <a class="nav-link" href="#demo">Demo</a>
       <a class="nav-link" href="#upload">Upload</a>
       <a class="nav-link" href="#about">About</a>
@@ -618,6 +745,9 @@
         <button class="btn btn-primary" onclick="scrollToDemo()">
           ▶ &nbsp;Run Free Demo
         </button>
+        <a class="btn btn-purple" href="#compare">
+          🔬 &nbsp;Bias Exposer
+        </a>
         <a class="btn btn-outline" href="#upload">
           Upload Your Dataset
         </a>
@@ -659,8 +789,12 @@
 <div class="stats-band">
   <div class="stats-inner">
     <div class="stat-item">
-      <div class="stat-num">34%</div>
+      <div class="stat-num" id="anim-gap">34%</div>
       <div class="stat-desc">Gender hiring gap in Indian tech — invisible until audited</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5,000</div>
+      <div class="stat-desc">Research-grounded records with 6 documented bias patterns</div>
     </div>
     <div class="stat-item">
       <div class="stat-num">90s</div>
@@ -812,6 +946,165 @@
   </div>
 </section>
 
+<!-- ── SCENARIO COMPARISON (BIAS EXPOSER) ─────────────────────────────── -->
+<section class="compare-section" id="compare">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-tag" style="color:var(--purple);">🔬 Bias Exposer</div>
+      <h2>See Bias in Action — Side by Side</h2>
+      <p class="section-sub">
+        Two identical students, only demographics differ. Watch how bias changes the outcome.
+        Click "Expose Bias" to run the comparison.
+      </p>
+    </div>
+
+    <div class="compare-grid">
+      <!-- Profile A -->
+      <div class="compare-profile">
+        <h3><span style="color:var(--blue);">●</span> Profile A</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label class="form-label">Name</label>
+            <input class="form-input" id="ca-name" value="Priya Sharma" />
+          </div>
+          <div>
+            <label class="form-label">Gender</label>
+            <select class="form-input" id="ca-gender">
+              <option value="0" selected>Female</option>
+              <option value="1">Male</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">City Tier</label>
+            <select class="form-input" id="ca-state">
+              <option value="Metro">Metro</option>
+              <option value="Tier2">Tier 2</option>
+              <option value="Tier3" selected>Tier 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">College Tier</label>
+            <select class="form-input" id="ca-institution">
+              <option value="IIT_NIT">IIT/NIT</option>
+              <option value="Tier2_College" selected>Tier 2</option>
+              <option value="Tier3_College">Tier 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Skills</label>
+            <input class="form-input" type="number" id="ca-skills" value="88" min="0" max="100" />
+          </div>
+          <div>
+            <label class="form-label">Communication</label>
+            <input class="form-input" type="number" id="ca-comm" value="75" min="0" max="100" />
+          </div>
+          <div>
+            <label class="form-label">Experience</label>
+            <input class="form-input" type="number" id="ca-exp" value="3" min="0" max="20" />
+          </div>
+          <div>
+            <label class="form-label">Gap Years</label>
+            <input class="form-input" type="number" id="ca-gap" value="1" min="0" max="10" />
+          </div>
+          <div>
+            <label class="form-label">Referral</label>
+            <select class="form-input" id="ca-referral">
+              <option value="0" selected>No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Age</label>
+            <input class="form-input" type="number" id="ca-age" value="26" min="18" max="50" />
+          </div>
+        </div>
+      </div>
+
+      <!-- VS badge -->
+      <div class="compare-vs">
+        <div class="compare-vs-badge">VS</div>
+      </div>
+
+      <!-- Profile B -->
+      <div class="compare-profile">
+        <h3><span style="color:var(--purple);">●</span> Profile B</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label class="form-label">Name</label>
+            <input class="form-input" id="cb-name" value="Rahul Verma" />
+          </div>
+          <div>
+            <label class="form-label">Gender</label>
+            <select class="form-input" id="cb-gender">
+              <option value="0">Female</option>
+              <option value="1" selected>Male</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">City Tier</label>
+            <select class="form-input" id="cb-state">
+              <option value="Metro" selected>Metro</option>
+              <option value="Tier2">Tier 2</option>
+              <option value="Tier3">Tier 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">College Tier</label>
+            <select class="form-input" id="cb-institution">
+              <option value="IIT_NIT">IIT/NIT</option>
+              <option value="Tier2_College" selected>Tier 2</option>
+              <option value="Tier3_College">Tier 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Skills</label>
+            <input class="form-input" type="number" id="cb-skills" value="88" min="0" max="100" />
+          </div>
+          <div>
+            <label class="form-label">Communication</label>
+            <input class="form-input" type="number" id="cb-comm" value="75" min="0" max="100" />
+          </div>
+          <div>
+            <label class="form-label">Experience</label>
+            <input class="form-input" type="number" id="cb-exp" value="3" min="0" max="20" />
+          </div>
+          <div>
+            <label class="form-label">Gap Years</label>
+            <input class="form-input" type="number" id="cb-gap" value="0" min="0" max="10" />
+          </div>
+          <div>
+            <label class="form-label">Referral</label>
+            <select class="form-input" id="cb-referral">
+              <option value="0">No</option>
+              <option value="1" selected>Yes</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Age</label>
+            <input class="form-input" type="number" id="cb-age" value="26" min="18" max="50" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:24px;">
+      <button class="btn btn-purple" id="compare-btn" onclick="runCompare()" style="padding:14px 40px; font-size:15px;">
+        🔬 &nbsp;Expose Bias Now
+      </button>
+    </div>
+
+    <div class="alert alert-error" id="compare-error" style="margin-top:12px;"></div>
+
+    <div id="compare-loader" style="display:none; text-align:center; padding:48px;">
+      <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px;"></div>
+      <div style="font-size:13px;color:var(--text-3);">Comparing profiles through both models…</div>
+    </div>
+
+    <div id="compare-result" class="hidden"></div>
+  </div>
+</section>
+
+
 <!-- ── DEMO SECTION ───────────────────────────────────────────────────── -->
 <section class="results-section" id="demo">
   <div class="container">
@@ -859,6 +1152,9 @@
 
       <!-- Ground truth callout -->
       <div id="gt-callout"></div>
+
+      <!-- Model Details -->
+      <div id="model-details-area"></div>
 
       <!-- Before / After -->
       <div class="divider"></div>
@@ -933,7 +1229,7 @@
         <div class="about-icon">🔍</div>
         <div class="about-title">2 · Explain</div>
         <div class="about-desc">
-          SHAP-based feature attribution pinpoints which columns are driving the bias.
+          Feature attribution pinpoints which columns are driving the bias.
           Not jargon — a clear breakdown your whole team can understand and act on.
         </div>
       </div>
@@ -944,6 +1240,39 @@
           Reweighing adjusts training sample weights so underrepresented groups carry
           equal influence. Bias removed before deployment — with minimal accuracy loss.
         </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Architecture -->
+    <div class="section-tag" style="margin-bottom:10px">Architecture</div>
+    <h2 style="margin-bottom:20px">End-to-End Pipeline</h2>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; text-align:center;">
+      <div class="card" style="padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">📄</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);">CSV Dataset</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Upload / Demo</div>
+      </div>
+      <div class="card" style="padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">⚙️</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);">FastAPI Backend</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">REST API</div>
+      </div>
+      <div class="card" style="padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">🧠</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);">Bias Engine</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">ML + Fairness</div>
+      </div>
+      <div class="card" style="padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">⚖️</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);">Reweighing Fix</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Mitigation</div>
+      </div>
+      <div class="card" style="padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">📊</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);">Visual Report</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Charts + Verdicts</div>
       </div>
     </div>
 
@@ -977,6 +1306,24 @@
   </div>
 </section>
 
+<!-- ── FOOTER ──────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-title">⚖️ Bias Breakers</div>
+    <div class="footer-sub">AI-Powered Bias Detection & Fairness Auditing Platform</div>
+    <div class="footer-links">
+      <a href="#predict">Predict</a>
+      <a href="#compare">Bias Exposer</a>
+      <a href="#demo">Live Demo</a>
+      <a href="#upload">Upload</a>
+      <a href="#about">How It Works</a>
+    </div>
+    <div style="margin-top:20px; font-size:12px; color:rgba(255,255,255,.35);">
+      Built for Hackathon — Problem 4: Unbiased AI Decision Making &nbsp;|&nbsp; v2.0
+    </div>
+  </div>
+</footer>
+
 <!-- ── SCRIPTS ─────────────────────────────────────────────────────────── -->
 <script>
   // ── Utility ──────────────────────────────────────────────────────────────
@@ -986,11 +1333,26 @@
 
   let shapChart = null;
   let groupChart = null;
-  let demoLoaded = false;   // FIX: moved inside <script> (was stranded outside)
+  let demoLoaded = false;
 
   function scrollToDemo() {
     document.getElementById('demo').scrollIntoView({ behavior:'smooth' });
     setTimeout(runDemo, 400);
+  }
+
+  // ── Animated counter ─────────────────────────────────────────────────────
+  function animateValue(el, start, end, duration, suffix='') {
+    const range = end - start;
+    const startTime = performance.now();
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = start + range * eased;
+      el.textContent = (Number.isInteger(end) ? Math.round(current) : current.toFixed(3)) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
 
   // ── Severity helpers ──────────────────────────────────────────────────────
@@ -1015,12 +1377,17 @@
     const ds = data.dataset_info;
     const gt = data.ground_truth;
     const ac = data.accuracy;
+    const md = data.model_details;
 
-    // Update hero card
-    $('hero-di').textContent    = b.disparate_impact.toFixed(3);
-    $('hero-gap').textContent   = b.gender_gap_pct.toFixed(1) + '%';
-    $('hero-records').textContent = (ds.total_records/1000).toFixed(1)+'K';
-    $('hero-di-after').textContent = a.disparate_impact.toFixed(3);
+    // Animate hero card
+    const heroDi = $('hero-di');
+    const heroGap = $('hero-gap');
+    const heroRec = $('hero-records');
+    const heroDiA = $('hero-di-after');
+    animateValue(heroDi, 0, b.disparate_impact, 1200);
+    animateValue(heroGap, 0, b.gender_gap_pct, 1200, '%');
+    heroRec.textContent = (ds.total_records/1000).toFixed(1)+'K';
+    animateValue(heroDiA, 0, a.disparate_impact, 1200);
 
     // Metric cards
     const mg = $(containerId === 'results-area' ? 'metrics-grid' : containerId+'-metrics');
@@ -1128,7 +1495,65 @@
               Their average post-hire performance would have been <strong>${gt.avg_perf_rejected_women}/100</strong>,
               compared to <strong>${gt.avg_perf_hired_overall}/100</strong> for those actually hired.
               The bias was irrational — the model penalised location and career gaps, not ability.
+              ${gt.talent_loss_pct ? `<br><strong>${gt.talent_loss_pct}% of qualified women</strong> were unfairly rejected — a massive talent loss.` : ''}
             </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Model details (real metrics)
+    const mdEl = document.getElementById(containerId==='results-area' ? 'model-details-area' : containerId+'-model');
+    if (mdEl && md) {
+      mdEl.innerHTML = `
+        <div class="divider"></div>
+        <div class="section-tag" style="margin-bottom:10px">Model Performance</div>
+        <h2 style="margin-bottom:8px; font-size:24px;">Real ML Metrics (75/25 Train-Test Split)</h2>
+        <p class="section-sub" style="margin-bottom:0">These are actual model performance numbers — not simulated.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+          <div class="card">
+            <div class="card-title" style="color:var(--red);">⚠️ Biased Model</div>
+            <div class="model-detail-grid">
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.accuracy*100).toFixed(1)}%</div>
+                <div class="model-detail-label">Accuracy</div>
+              </div>
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.precision*100).toFixed(1)}%</div>
+                <div class="model-detail-label">Precision</div>
+              </div>
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.recall*100).toFixed(1)}%</div>
+                <div class="model-detail-label">Recall</div>
+              </div>
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.f1*100).toFixed(1)}%</div>
+                <div class="model-detail-label">F1 Score</div>
+              </div>
+            </div>
+            ${md.biased_model.cv_mean ? `<div style="margin-top:8px;font-size:12px;color:var(--text-3);text-align:center;">5-Fold CV: ${(md.biased_model.cv_mean*100).toFixed(1)}% ± ${(md.biased_model.cv_std*100).toFixed(1)}%</div>` : ''}
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--green);">✅ Fair Model (Reweighed)</div>
+            <div class="model-detail-grid">
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.accuracy*100).toFixed(1)}%</div>
+                <div class="model-detail-label">Accuracy</div>
+              </div>
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.precision*100).toFixed(1)}%</div>
+                <div class="model-detail-label">Precision</div>
+              </div>
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.recall*100).toFixed(1)}%</div>
+                <div class="model-detail-label">Recall</div>
+              </div>
+              <div class="model-detail-card">
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.f1*100).toFixed(1)}%</div>
+                <div class="model-detail-label">F1 Score</div>
+              </div>
+            </div>
+            ${md.fair_model.cv_mean ? `<div style="margin-top:8px;font-size:12px;color:var(--text-3);text-align:center;">5-Fold CV: ${(md.fair_model.cv_mean*100).toFixed(1)}% ± ${(md.fair_model.cv_std*100).toFixed(1)}%</div>` : ''}
           </div>
         </div>
       `;
@@ -1183,7 +1608,7 @@
             <div class="callout-body">
               Reweighing improved Disparate Impact from <strong>${b.disparate_impact.toFixed(3)}</strong>
               to <strong>${a.disparate_impact.toFixed(3)}</strong> — a <strong>${((a.disparate_impact-b.disparate_impact)*100).toFixed(0)}%</strong> improvement.
-              Model accuracy decreased by <strong>${accDrop}%</strong> — a small, acceptable tradeoff for eliminating systemic discrimination.
+              Model accuracy ${ac.before > ac.after ? 'decreased' : 'changed'} by <strong>${Math.abs(accDrop)}%</strong> — a small, acceptable tradeoff for eliminating systemic discrimination.
             </div>
           </div>
         </div>
@@ -1359,8 +1784,129 @@
     $('predict-result').style.display = 'block';
   }
 
+  // ── Scenario Comparison ───────────────────────────────────────────────────
+  async function runCompare() {
+    const btn = $('compare-btn');
+    $('compare-error').style.display = 'none';
+    $('compare-result').classList.add('hidden');
+    $('compare-loader').style.display = 'block';
+    btn.disabled = true; btn.textContent = 'Comparing…';
+
+    const profileA = {
+      name:                $('ca-name').value.trim() || 'Profile A',
+      gender:              parseInt($('ca-gender').value),
+      age:                 parseInt($('ca-age').value),
+      state_of_origin:     $('ca-state').value,
+      institution_tier:    $('ca-institution').value,
+      skills_score:        parseFloat($('ca-skills').value),
+      communication_score: parseFloat($('ca-comm').value),
+      experience_years:    parseInt($('ca-exp').value),
+      gap_years:           parseInt($('ca-gap').value),
+      referral:            parseInt($('ca-referral').value),
+    };
+
+    const profileB = {
+      name:                $('cb-name').value.trim() || 'Profile B',
+      gender:              parseInt($('cb-gender').value),
+      age:                 parseInt($('cb-age').value),
+      state_of_origin:     $('cb-state').value,
+      institution_tier:    $('cb-institution').value,
+      skills_score:        parseFloat($('cb-skills').value),
+      communication_score: parseFloat($('cb-comm').value),
+      experience_years:    parseInt($('cb-exp').value),
+      gap_years:           parseInt($('cb-gap').value),
+      referral:            parseInt($('cb-referral').value),
+    };
+
+    try {
+      const res = await fetch('/api/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile_a: profileA, profile_b: profileB }),
+      });
+      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
+      const data = await res.json();
+      $('compare-loader').style.display = 'none';
+      renderComparison(data, profileA, profileB);
+    } catch (e) {
+      $('compare-loader').style.display = 'none';
+      $('compare-error').style.display = 'block';
+      $('compare-error').textContent = 'Error: ' + e.message;
+    }
+
+    btn.disabled = false; btn.textContent = '🔬  Expose Bias Now';
+  }
+
+  function renderComparison(data, pa, pb) {
+    const a = data.profile_a;
+    const b = data.profile_b;
+
+    const decIcon = (dec) => dec === 1 ? '✅' : '❌';
+    const decColor = (dec) => dec === 1 ? 'var(--green)' : 'var(--red)';
+    const decText = (dec) => dec === 1 ? 'SELECTED' : 'REJECTED';
+
+    const summaryClass = data.bias_gap > 15 ? 'callout-red' : data.bias_gap > 5 ? 'callout-purple' : 'callout-blue';
+
+    $('compare-result').innerHTML = `
+      <div class="compare-result animate-in">
+        <div class="card-title" style="margin-bottom:16px;">Comparison Results</div>
+
+        <div class="compare-result-grid">
+          <div class="card" style="border-left: 3px solid var(--blue);">
+            <div style="font-weight:600; margin-bottom:12px;">${a.name}</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span style="font-size:20px;">${decIcon(a.biased_decision)}</span>
+              <span style="font-weight:700;color:${decColor(a.biased_decision)};font-size:14px;">${decText(a.biased_decision)} (Biased)</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);">${a.biased_prob}%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:20px;">⚖️</span>
+              <span style="font-weight:700;color:${decColor(a.fair_decision)};font-size:14px;">${decText(a.fair_decision)} (Fair)</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);">${a.fair_prob}%</span>
+            </div>
+            ${a.bias_changed_outcome ? '<div class="badge badge-warn" style="margin-top:8px;">Bias flipped outcome</div>' : ''}
+          </div>
+
+          <div class="card" style="border-left: 3px solid var(--purple);">
+            <div style="font-weight:600; margin-bottom:12px;">${b.name}</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span style="font-size:20px;">${decIcon(b.biased_decision)}</span>
+              <span style="font-weight:700;color:${decColor(b.biased_decision)};font-size:14px;">${decText(b.biased_decision)} (Biased)</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);">${b.biased_prob}%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:20px;">⚖️</span>
+              <span style="font-weight:700;color:${decColor(b.fair_decision)};font-size:14px;">${decText(b.fair_decision)} (Fair)</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);">${b.fair_prob}%</span>
+            </div>
+            ${b.bias_changed_outcome ? '<div class="badge badge-warn" style="margin-top:8px;">Bias flipped outcome</div>' : ''}
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div style="text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);">
+            <div style="font-size:28px;font-weight:700;color:var(--red);font-family:'Lora',serif;">${data.bias_gap}%</div>
+            <div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Biased Probability Gap</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);">
+            <div style="font-size:28px;font-weight:700;color:var(--green);font-family:'Lora',serif;">${data.fair_gap}%</div>
+            <div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Fair Probability Gap</div>
+          </div>
+        </div>
+
+        <div class="callout ${summaryClass}" style="margin-top:16px;">
+          <div class="callout-icon">💡</div>
+          <div>
+            <div class="callout-title">Analysis</div>
+            <div class="callout-body">${data.summary}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    $('compare-result').classList.remove('hidden');
+  }
+
   // ── Demo ──────────────────────────────────────────────────────────────────
-  // FIX: runDemo and all functions below were stranded outside the <script> block in the original.
   async function runDemo() {
     if (demoLoaded) return;
 
@@ -1448,6 +1994,7 @@
         </div>
       </div>
       <div id="upload-results-gt"></div>
+      <div id="upload-results-model"></div>
       <div class="ba-grid" id="upload-results-ba" style="margin-top:24px"></div>
       <div id="upload-results-acc"></div>
     `;
@@ -1459,6 +2006,7 @@
     const ds = data.dataset_info;
     const gt = data.ground_truth;
     const ac = data.accuracy;
+    const md = data.model_details;
 
     const mg = $('upload-results-metrics-grid');
     mg.innerHTML = `
@@ -1529,6 +2077,49 @@
       }
     });
 
+    // Ground truth
+    const gtEl = $('upload-results-gt');
+    if (gtEl && gt) {
+      gtEl.innerHTML = `
+        <div class="callout callout-red" style="margin-top:20px;">
+          <div class="callout-icon">🔍</div>
+          <div>
+            <div class="callout-title" style="color:var(--red)">Ground Truth</div>
+            <div class="callout-body">
+              <strong>${gt.skilled_rejected_women}</strong> skilled women were rejected.
+              Avg performance: <strong>${gt.avg_perf_rejected_women}</strong> vs <strong>${gt.avg_perf_hired_overall}</strong> for hired.
+              ${gt.talent_loss_pct ? `<strong>${gt.talent_loss_pct}%</strong> talent loss.` : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Model details
+    const mdEl = $('upload-results-model');
+    if (mdEl && md) {
+      mdEl.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;">
+          <div class="card">
+            <div class="card-title" style="color:var(--red);">Biased Model</div>
+            <div class="model-detail-grid">
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.accuracy*100).toFixed(1)}%</div><div class="model-detail-label">Accuracy</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.precision*100).toFixed(1)}%</div><div class="model-detail-label">Precision</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.recall*100).toFixed(1)}%</div><div class="model-detail-label">Recall</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.f1*100).toFixed(1)}%</div><div class="model-detail-label">F1</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--green);">Fair Model</div>
+            <div class="model-detail-grid">
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.accuracy*100).toFixed(1)}%</div><div class="model-detail-label">Accuracy</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.precision*100).toFixed(1)}%</div><div class="model-detail-label">Precision</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.recall*100).toFixed(1)}%</div><div class="model-detail-label">Recall</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.f1*100).toFixed(1)}%</div><div class="model-detail-label">F1</div></div>
+            </div>
+          </div>
+        </div>`;
+    }
+
     $('upload-results-ba').innerHTML = `
       <div class="ba-panel before">
         <div class="ba-panel-head"><span>Before Mitigation</span><span class="badge badge-fail">BIASED</span></div>
@@ -1559,12 +2150,13 @@
           <div class="callout-title" style="color:var(--blue)">Fairness–Accuracy Tradeoff</div>
           <div class="callout-body">
             Disparate Impact improved from <strong>${b.disparate_impact.toFixed(3)}</strong> to <strong>${a.disparate_impact.toFixed(3)}</strong>.
-            Accuracy decreased by <strong>${accDrop}%</strong> — a small cost for removing systemic discrimination.
+            Accuracy changed by <strong>${Math.abs(accDrop)}%</strong> — a small cost for removing systemic discrimination.
           </div>
         </div>
       </div>
     `;
   }
+
 </script>
 </body>
 </html>

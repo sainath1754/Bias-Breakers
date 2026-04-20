@@ -9,3 +9,10 @@ dist/
 build/
 .pytest_cache/
 *.log
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+datasets/*.csv
+!datasets/.gitkeep

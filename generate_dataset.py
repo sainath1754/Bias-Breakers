@@ -104,7 +104,7 @@ def generate(n: int = 5000, seed: int = 42) -> pd.DataFrame:
     print(f"  Female hire rate : {df[df.gender==0].hiring_decision.mean():.1%}")
     di = (df[df.gender==0].hiring_decision.mean() /
           df[df.gender==1].hiring_decision.mean())
-    print(f"  Disparate Impact : {di:.3f}  (threshold 0.80 — {'FAIL ✗' if di<0.8 else 'PASS ✓'})")
+    print(f"  Disparate Impact : {di:.3f}  (threshold 0.80 -- {'FAIL [X]' if di<0.8 else 'PASS [OK]'})")
     print(f"  Saved to         : {out}")
     print("=" * 56 + "\n")
     return df

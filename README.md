@@ -1,36 +1,45 @@
-# Bias Breakers ⚖️
+# Bias Breakers v2.0 ⚖️
 
-**AI-Powered Bias Detection & Fairness Auditing Platform**
+**AI-Powered Bias Detection, Explanation & Mitigation Platform**
 
-Bias Breakers detects, explains, and fixes hidden discrimination in AI models — before they affect real people.
+Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models — before they affect real people. It uses real ML pipelines with genuine train/test evaluation to prove bias exists and then removes it using Reweighing mitigation.
+
+---
 
 ## 🚀 Quick Start
 
 ```bash
 # 1. Create virtual environment
 python -m venv venv
-source venv/bin/activate      # Mac/Linux
-# venv\Scripts\activate       # Windows
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # Mac/Linux
 
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Generate dataset
+# 3. Generate the dataset
 python generate_dataset.py
 
 # 4. Start server
-uvicorn main:app --reload
+python -m uvicorn main:app --reload
+
+# 5. Open browser
+# http://127.0.0.1:8000
 ```
 
-Open **http://127.0.0.1:8000** in your browser.
+---
 
 ## 🎯 What It Does
 
 | Step | Action |
 |------|--------|
-| **Detect** | Computes 4 fairness metrics (Disparate Impact, SPD, EOD, AOD) |
-| **Explain** | SHAP-based feature attribution — pinpoints the exact cause of bias |
-| **Fix** | Reweighing mitigation — one click, bias removed before deployment |
+| **Detect** | Computes fairness metrics (Disparate Impact, Statistical Parity Difference) on real train/test splits |
+| **Explain** | Feature attribution pinpoints the exact cause of bias with contribution percentages |
+| **Fix** | Reweighing mitigation adjusts sample weights — one click, bias removed before deployment |
+| **Compare** | Side-by-side Bias Exposer shows how two identical profiles get different outcomes due to bias |
+| **Predict** | Individual student predictor with rejection reasons, bias factors, and improvement tips |
+
+---
 
 ## 📊 Dataset — IndiaHire-Bias v1.0
 
@@ -39,39 +48,90 @@ Open **http://127.0.0.1:8000** in your browser.
 - **Gender bias** — Women 34% less likely hired despite equal skills
 - **Geographic bias** — Tier-3 city candidates penalised 28%
 - **Institution bias** — Non-IIT/NIT candidates penalised 41%
-- **Career gap penalty** — Disproportionately affects women (maternity)
-- **Referral advantage** — Men receive 2× more referrals
+- **Career gap penalty** — Disproportionately affects women (maternity/care leave)
+- **Referral advantage** — Men receive 2x more referrals
 - **Age bias** — Candidates 38+ face 22% lower selection rate
 
-**Ground truth column** (`actual_performance_score`) proves bias was irrational.
+**Ground truth column** (`actual_performance_score`) proves bias was irrational — rejected candidates performed just as well.
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Backend** — Python 3.11, FastAPI, scikit-learn, pandas, numpy
-- **Frontend** — HTML5, CSS3, Vanilla JS, Chart.js
-- **ML** — Logistic Regression, Reweighing mitigation
+- **Backend** — Python 3.12, FastAPI, Pydantic
+- **ML Engine** — scikit-learn (Logistic Regression, Reweighing, Cross-Validation)
+- **Data** — pandas, numpy
+- **Frontend** — HTML5, CSS3, Vanilla JavaScript, Chart.js
+- **Architecture** — REST API, Single-Page Application
+
+---
 
 ## 📁 Project Structure
 
 ```
 bias-breakers/
-├── main.py               FastAPI application
-├── bias_engine.py        ML bias detection logic
-├── generate_dataset.py   Dataset generator
-├── requirements.txt      Dependencies
-├── static/index.html     Web frontend
-└── datasets/             Generated CSV files
+├── main.py                 FastAPI application (7 API endpoints)
+├── bias_engine.py          ML bias detection & mitigation engine
+├── generate_dataset.py     Synthetic dataset generator
+├── requirements.txt        Python dependencies
+├── commands.txt            Setup & run guide
+├── README.md               This file
+├── static/
+│   └── index.html          Frontend web application
+└── datasets/
+    └── indiahire_bias.csv  Generated dataset (after running generator)
 ```
 
-## 🔗 API
+---
+
+## 🔗 API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/` | GET | Web application |
-| `/api/demo` | GET | Run audit on IndiaHire dataset |
-| `/api/analyze` | POST | Audit your own CSV file |
-| `/api/health` | GET | Health check |
+| `/api/health` | GET | Health check with version info |
+| `/api/demo` | GET | Run full audit on IndiaHire dataset |
+| `/api/predict` | POST | Predict outcome for a single student |
+| `/api/compare` | POST | Compare two profiles side-by-side |
+| `/api/batch` | POST | Batch prediction for multiple students |
+| `/api/analyze` | POST | Upload and audit your own CSV dataset |
+| `/api/dataset/stats` | GET | Quick summary stats of loaded dataset |
 
 ---
 
-*Built for Hackathon — Problem 4: Unbiased AI Decision Making*
+## 🔬 Key Features
+
+### 1. Bias Exposer (Scenario Comparison)
+Compare two profiles — same skills, different demographics. Watch how bias changes the outcome in real time.
+
+### 2. Real ML Metrics
+Genuine train/test split (75/25) with actual Accuracy, Precision, Recall, F1 Score, and 5-Fold Cross-Validation.
+
+### 3. Student Predictor
+Enter any student's details → get biased vs fair predictions, rejection reasons explained in plain English, bias factors highlighted, and actionable improvement tips.
+
+### 4. One-Click Mitigation
+Reweighing algorithm adjusts training sample weights so underrepresented groups carry equal influence. Bias removed with minimal accuracy tradeoff.
+
+### 5. Ground Truth Validation
+The `actual_performance_score` column proves the bias was irrational — rejected women would have performed equally or better than those hired.
+
+---
+
+## 📈 ML Pipeline
+
+```
+CSV Dataset → Encode & Scale → Train/Test Split (75/25)
+    ↓                              ↓
+Biased Model (LR)           Reweighed Model (LR + sample weights)
+    ↓                              ↓
+Fairness Metrics             Fairness Metrics
+    ↓                              ↓
+    └──── Compare Before vs After ────┘
+                   ↓
+          Visual Report + Verdicts
+```
+
+---
+
+*Built for Hackathon — Problem 4: Unbiased AI Decision Making | v2.0*
