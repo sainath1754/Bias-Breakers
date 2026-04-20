@@ -981,11 +981,12 @@
 <script>
   // ── Utility ──────────────────────────────────────────────────────────────
   const $  = id => document.getElementById(id);
-  const show = id => { const el=$(id); if(el) el.style.display=''; }
-  const hide = id => { const el=$(id); if(el) el.style.display='none'; }
+  const show = id => { const el=$(id); if(el) el.style.display=''; };
+  const hide = id => { const el=$(id); if(el) el.style.display='none'; };
 
   let shapChart = null;
   let groupChart = null;
+  let demoLoaded = false;   // FIX: moved inside <script> (was stranded outside)
 
   function scrollToDemo() {
     document.getElementById('demo').scrollIntoView({ behavior:'smooth' });
@@ -1054,7 +1055,7 @@
     }
 
     // SHAP chart
-    const shapCtx = document.getElementById(containerId==='results-area'?'shap-chart':containerId+'-shap');
+    const shapCtx = document.getElementById(containerId==='results-area' ? 'shap-chart' : containerId+'-shap');
     if (shapCtx) {
       if (shapChart) { shapChart.destroy(); shapChart = null; }
       const labels = fi.map(f => f.feature.replace(/_/g,' '));
@@ -1079,7 +1080,7 @@
     }
 
     // Group chart
-    const gcCtx = document.getElementById(containerId==='results-area'?'group-chart':containerId+'-group');
+    const gcCtx = document.getElementById(containerId==='results-area' ? 'group-chart' : containerId+'-group');
     if (gcCtx) {
       if (groupChart) { groupChart.destroy(); groupChart = null; }
       groupChart = new Chart(gcCtx, {
@@ -1115,7 +1116,7 @@
     }
 
     // Ground truth callout
-    const gtEl = document.getElementById(containerId==='results-area'?'gt-callout':containerId+'-gt');
+    const gtEl = document.getElementById(containerId==='results-area' ? 'gt-callout' : containerId+'-gt');
     if (gtEl && gt) {
       gtEl.innerHTML = `
         <div class="callout callout-red">
@@ -1134,7 +1135,7 @@
     }
 
     // Before / After
-    const baEl = document.getElementById(containerId==='results-area'?'ba-grid':containerId+'-ba');
+    const baEl = document.getElementById(containerId==='results-area' ? 'ba-grid' : containerId+'-ba');
     if (baEl) {
       baEl.innerHTML = `
         <div class="ba-panel before">
@@ -1171,7 +1172,7 @@
     }
 
     // Accuracy tradeoff note
-    const accEl = document.getElementById(containerId==='results-area'?'accuracy-note':containerId+'-acc');
+    const accEl = document.getElementById(containerId==='results-area' ? 'accuracy-note' : containerId+'-acc');
     if (accEl) {
       const accDrop = ((ac.before - ac.after)*100).toFixed(1);
       accEl.innerHTML = `
@@ -1238,7 +1239,6 @@
     const fair    = d.fair_decision   === 1;
     const changed = d.bias_changed_outcome;
 
-    // ── Verdict blocks ──────────────────────────────────────────────────────
     const verdictBiased = biased
       ? `<div class="verdict verdict-selected">
            <div class="verdict-icon">✅</div>
@@ -1279,7 +1279,6 @@
            </div>
          </div>`;
 
-    // ── Rejection reasons ──────────────────────────────────────────────────
     let reasonsHtml = '';
     if (!biased && d.rejection_reasons.length) {
       const items = d.rejection_reasons.map(r =>
@@ -1292,7 +1291,6 @@
         </div>`;
     }
 
-    // ── Bias factors ───────────────────────────────────────────────────────
     let biasHtml = '';
     if (d.bias_factors.length) {
       const items = d.bias_factors.map(b =>
@@ -1320,7 +1318,6 @@
         </div>`;
     }
 
-    // ── Improvements ───────────────────────────────────────────────────────
     let improveHtml = '';
     if (d.improvements.length) {
       const items = d.improvements.map(imp => `
@@ -1361,8 +1358,9 @@
     `;
     $('predict-result').style.display = 'block';
   }
-</script>
-  let demoLoaded = false;
+
+  // ── Demo ──────────────────────────────────────────────────────────────────
+  // FIX: runDemo and all functions below were stranded outside the <script> block in the original.
   async function runDemo() {
     if (demoLoaded) return;
 
@@ -1455,7 +1453,6 @@
     `;
     area.classList.remove('hidden');
 
-    // Reuse render with upload prefix
     const b  = data.metrics_before;
     const a  = data.metrics_after;
     const fi = data.feature_importance;
@@ -1490,7 +1487,6 @@
       </div>
     `;
 
-    // Charts
     const sc = $('upload-results-shap');
     const labels = fi.map(f => f.feature.replace(/_/g,' '));
     const vals   = fi.map(f => f.importance);
@@ -1533,7 +1529,6 @@
       }
     });
 
-    // BA panel
     $('upload-results-ba').innerHTML = `
       <div class="ba-panel before">
         <div class="ba-panel-head"><span>Before Mitigation</span><span class="badge badge-fail">BIASED</span></div>
