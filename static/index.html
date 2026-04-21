@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -324,12 +326,19 @@
       border-radius: var(--radius);
       padding: 24px;
       box-shadow: var(--shadow);
+      min-width: 0; /* prevents grid blowout */
     }
     .chart-wrap h3 {
       font-size: 14px; font-weight: 600; color: var(--text);
       margin-bottom: 4px;
     }
     .chart-sub { font-size: 12px; color: var(--text-3); margin-bottom: 18px; }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      max-height: 280px;
+    }
 
     /* ── BEFORE/AFTER ────────────────────────────────────────────────── */
     .ba-grid {
@@ -626,8 +635,8 @@
     /* ── MODEL DETAILS ───────────────────────────────────────────────── */
     .model-detail-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
       margin-top: 16px;
     }
     .model-detail-card {
@@ -639,7 +648,7 @@
     }
     .model-detail-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 22px; font-weight: 700;
+      font-size: 20px; font-weight: 700;
       color: var(--blue);
     }
     .model-detail-label {
@@ -700,6 +709,7 @@
       .compare-grid { grid-template-columns: 1fr; }
       .compare-vs { padding: 0; }
       .model-detail-grid { grid-template-columns: 1fr 1fr; }
+      .chart-container { height: 260px; max-height: 260px; }
     }
     @media (max-width: 600px) {
       .metric-grid { grid-template-columns: 1fr; }
@@ -723,6 +733,7 @@
       <a class="nav-link" href="#demo">Demo</a>
       <a class="nav-link" href="#upload">Upload</a>
       <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#" onclick="event.preventDefault();downloadDocx()" style="color:var(--purple);font-weight:600;">📄 Docs</a>
       <button class="nav-btn" onclick="scrollToDemo()">Run Audit →</button>
     </div>
   </div>
@@ -1141,12 +1152,12 @@
         <div class="chart-wrap">
           <h3>Feature Contribution to Bias</h3>
           <div class="chart-sub">Which features drive discriminatory outcomes (model coefficient importance)</div>
-          <canvas id="shap-chart" height="240"></canvas>
+          <div class="chart-container"><canvas id="shap-chart"></canvas></div>
         </div>
         <div class="chart-wrap">
           <h3>Hiring Rate by Group</h3>
           <div class="chart-sub">Selection rate comparison across demographic groups</div>
-          <canvas id="group-chart" height="240"></canvas>
+          <div class="chart-container"><canvas id="group-chart"></canvas></div>
         </div>
       </div>
 
@@ -1318,7 +1329,17 @@
       <a href="#upload">Upload</a>
       <a href="#about">How It Works</a>
     </div>
-    <div style="margin-top:20px; font-size:12px; color:rgba(255,255,255,.35);">
+    <div style="margin-top:20px;">
+      <button onclick="downloadDocx()" style="
+        padding:10px 24px; background:rgba(255,255,255,.12); color:#fff;
+        border:1px solid rgba(255,255,255,.2); border-radius:var(--radius-sm);
+        font-size:13px; font-weight:500; cursor:pointer;
+        transition:background .15s;
+      " onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+        📄 Download Documentation (.docx)
+      </button>
+    </div>
+    <div style="margin-top:16px; font-size:12px; color:rgba(255,255,255,.35);">
       Built for Hackathon — Problem 4: Unbiased AI Decision Making &nbsp;|&nbsp; v2.0
     </div>
   </div>
@@ -1985,12 +2006,12 @@
         <div class="chart-wrap">
           <h3>Feature Contribution to Bias</h3>
           <div class="chart-sub">Coefficient-based importance of each feature</div>
-          <canvas id="upload-results-shap" height="240"></canvas>
+          <div class="chart-container"><canvas id="upload-results-shap"></canvas></div>
         </div>
         <div class="chart-wrap">
           <h3>Hiring Rate by Group</h3>
           <div class="chart-sub">Before vs after mitigation</div>
-          <canvas id="upload-results-group" height="240"></canvas>
+          <div class="chart-container"><canvas id="upload-results-group"></canvas></div>
         </div>
       </div>
       <div id="upload-results-gt"></div>
@@ -2155,6 +2176,333 @@
         </div>
       </div>
     `;
+  }
+
+  // ── DOCX Documentation Download ──────────────────────────────────────────
+  async function downloadDocx() {
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
+            WidthType, AlignmentType, BorderStyle, ShadingType, TableLayoutType } = docx;
+
+    const BLUE = '2563EB';
+    const RED = 'DC2626';
+    const GREEN = '16A34A';
+    const DARK = '111827';
+    const GRAY = '6B7280';
+
+    const hr = () => new Paragraph({
+      spacing: { before: 200, after: 200 },
+      border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' } },
+    });
+
+    const heading = (text, level) => new Paragraph({
+      heading: level,
+      spacing: { before: 300, after: 120 },
+      children: [new TextRun({ text, bold: true, font: 'Cambria', color: DARK,
+        size: level === HeadingLevel.HEADING_1 ? 36 : level === HeadingLevel.HEADING_2 ? 28 : 24 })],
+    });
+
+    const para = (text, opts = {}) => new Paragraph({
+      spacing: { after: 120, ...(opts.spacing || {}) },
+      alignment: opts.align || AlignmentType.LEFT,
+      children: [new TextRun({ text, font: 'Calibri', size: 22, color: opts.color || DARK, ...(opts.run || {}) })],
+    });
+
+    const bullet = (text, opts = {}) => new Paragraph({
+      bullet: { level: opts.level || 0 },
+      spacing: { after: 60 },
+      children: [new TextRun({ text, font: 'Calibri', size: 22, color: DARK })],
+    });
+
+    const boldPara = (label, value) => new Paragraph({
+      spacing: { after: 80 },
+      children: [
+        new TextRun({ text: label, font: 'Calibri', size: 22, bold: true, color: DARK }),
+        new TextRun({ text: value, font: 'Calibri', size: 22, color: GRAY }),
+      ],
+    });
+
+    const tableCell = (text, opts = {}) => new TableCell({
+      width: { size: opts.width || 2400, type: WidthType.DXA },
+      shading: opts.shading ? { fill: opts.shading, type: ShadingType.CLEAR } : undefined,
+      children: [new Paragraph({
+        spacing: { before: 40, after: 40 },
+        children: [new TextRun({ text, font: 'Calibri', size: 20, bold: !!opts.bold, color: opts.color || DARK })],
+      })],
+    });
+
+    const doc = new Document({
+      creator: 'Bias Breakers Platform',
+      title: 'Bias Breakers — AI Fairness Auditing Documentation',
+      description: 'Complete documentation for the Bias Breakers AI bias detection and mitigation platform.',
+      sections: [{
+        properties: {
+          page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } },
+        },
+        children: [
+          // Title
+          new Paragraph({
+            spacing: { after: 80 },
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: '\u2696\uFE0F Bias Breakers v2.0', font: 'Cambria', size: 48, bold: true, color: BLUE })],
+          }),
+          new Paragraph({
+            spacing: { after: 200 },
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: 'AI-Powered Bias Detection, Explanation & Mitigation Platform', font: 'Calibri', size: 24, color: GRAY, italics: true })],
+          }),
+          para('Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models \u2014 before they affect real people. It uses real ML pipelines with genuine train/test evaluation to prove bias exists and then removes it using Reweighing mitigation.'),
+          hr(),
+
+          // Quick Start
+          heading('Quick Start', HeadingLevel.HEADING_1),
+          para('Follow these steps to set up and run the project:'),
+          bullet('python -m venv venv'),
+          bullet('venv\\Scripts\\activate   (Windows)  or  source venv/bin/activate  (Linux/Mac)'),
+          bullet('pip install -r requirements.txt'),
+          bullet('python generate_dataset.py'),
+          bullet('python -m uvicorn main:app --reload'),
+          bullet('Open http://127.0.0.1:8000 in your browser'),
+          hr(),
+
+          // What It Does
+          heading('What It Does', HeadingLevel.HEADING_1),
+          new Table({
+            width: { size: 9000, type: WidthType.DXA },
+            rows: [
+              new TableRow({ children: [
+                tableCell('Step', { bold: true, shading: 'EFF6FF', width: 2000 }),
+                tableCell('Action', { bold: true, shading: 'EFF6FF', width: 7000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('Detect', { width: 2000 }),
+                tableCell('Computes fairness metrics (Disparate Impact, Statistical Parity Difference) on real train/test splits', { width: 7000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('Explain', { width: 2000 }),
+                tableCell('Feature attribution pinpoints the exact cause of bias with contribution percentages', { width: 7000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('Fix', { width: 2000 }),
+                tableCell('Reweighing mitigation adjusts sample weights \u2014 one click, bias removed before deployment', { width: 7000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('Compare', { width: 2000 }),
+                tableCell('Side-by-side Bias Exposer shows how two identical profiles get different outcomes due to bias', { width: 7000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('Predict', { width: 2000 }),
+                tableCell('Individual student predictor with rejection reasons, bias factors, and improvement tips', { width: 7000 }),
+              ]}),
+            ],
+          }),
+          hr(),
+
+          // Dataset
+          heading('Dataset \u2014 IndiaHire-Bias v1.0', HeadingLevel.HEADING_1),
+          para('5,000-record synthetic Indian tech hiring dataset with 6 documented bias patterns:'),
+          bullet('Gender bias \u2014 Women 34% less likely hired despite equal skills'),
+          bullet('Geographic bias \u2014 Tier-3 city candidates penalised 28%'),
+          bullet('Institution bias \u2014 Non-IIT/NIT candidates penalised 41%'),
+          bullet('Career gap penalty \u2014 Disproportionately affects women (maternity/care leave)'),
+          bullet('Referral advantage \u2014 Men receive 2x more referrals'),
+          bullet('Age bias \u2014 Candidates 38+ face 22% lower selection rate'),
+          new Paragraph({ spacing: { before: 120, after: 80 }, children: [] }),
+          boldPara('Ground truth: ', 'The actual_performance_score column proves the bias was irrational \u2014 rejected candidates performed just as well.'),
+          hr(),
+
+          // Dataset Schema
+          heading('Dataset Schema', HeadingLevel.HEADING_2),
+          new Table({
+            width: { size: 9000, type: WidthType.DXA },
+            rows: [
+              new TableRow({ children: [
+                tableCell('Feature', { bold: true, shading: 'EFF6FF', width: 2600 }),
+                tableCell('Type', { bold: true, shading: 'EFF6FF', width: 1400 }),
+                tableCell('Description', { bold: true, shading: 'EFF6FF', width: 3000 }),
+                tableCell('Bias Signal', { bold: true, shading: 'EFF6FF', width: 2000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('gender', { width: 2600 }),
+                tableCell('Binary', { width: 1400 }),
+                tableCell('0 = Female, 1 = Male', { width: 3000 }),
+                tableCell('Primary bias', { width: 2000, color: RED }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('state_of_origin', { width: 2600 }),
+                tableCell('Categorical', { width: 1400 }),
+                tableCell('Metro / Tier2 / Tier3', { width: 3000 }),
+                tableCell('-28% Tier3', { width: 2000, color: RED }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('institution_tier', { width: 2600 }),
+                tableCell('Categorical', { width: 1400 }),
+                tableCell('IIT_NIT / Tier2 / Tier3', { width: 3000 }),
+                tableCell('-41% Tier3', { width: 2000, color: RED }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('gap_years', { width: 2600 }),
+                tableCell('Integer', { width: 1400 }),
+                tableCell('Career gap years (maternity proxy)', { width: 3000 }),
+                tableCell('-31% gap>=2', { width: 2000, color: RED }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('skills_score', { width: 2600 }),
+                tableCell('Float', { width: 1400 }),
+                tableCell('Technical assessment (0-100)', { width: 3000 }),
+                tableCell('Fair signal', { width: 2000, color: GREEN }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('communication_score', { width: 2600 }),
+                tableCell('Float', { width: 1400 }),
+                tableCell('Verbal/written assessment', { width: 3000 }),
+                tableCell('Fair signal', { width: 2000, color: GREEN }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('experience_years', { width: 2600 }),
+                tableCell('Integer', { width: 1400 }),
+                tableCell('Total work experience', { width: 3000 }),
+                tableCell('Fair signal', { width: 2000, color: GREEN }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('hiring_decision', { width: 2600 }),
+                tableCell('Binary', { width: 1400 }),
+                tableCell('Target: 1 = Hired, 0 = Rejected', { width: 3000 }),
+                tableCell('\u2014', { width: 2000 }),
+              ]}),
+              new TableRow({ children: [
+                tableCell('actual_performance_score', { width: 2600 }),
+                tableCell('Float', { width: 1400 }),
+                tableCell('Post-hire 6-month performance', { width: 3000 }),
+                tableCell('Ground truth', { width: 2000, color: BLUE }),
+              ]}),
+            ],
+          }),
+          hr(),
+
+          // Tech Stack
+          heading('Tech Stack', HeadingLevel.HEADING_1),
+          bullet('Backend \u2014 Python 3.12, FastAPI, Pydantic'),
+          bullet('ML Engine \u2014 scikit-learn (Logistic Regression, Reweighing, Cross-Validation)'),
+          bullet('Data \u2014 pandas, numpy'),
+          bullet('Frontend \u2014 HTML5, CSS3, Vanilla JavaScript, Chart.js'),
+          bullet('Architecture \u2014 REST API, Single-Page Application'),
+          hr(),
+
+          // Project Structure
+          heading('Project Structure', HeadingLevel.HEADING_1),
+          para('bias-breakers/', { run: { bold: true, font: 'Consolas' } }),
+          bullet('main.py \u2014 FastAPI application (7 API endpoints)'),
+          bullet('bias_engine.py \u2014 ML bias detection & mitigation engine'),
+          bullet('generate_dataset.py \u2014 Synthetic dataset generator'),
+          bullet('requirements.txt \u2014 Python dependencies'),
+          bullet('commands.txt \u2014 Setup & run guide'),
+          bullet('README.md \u2014 Project readme'),
+          bullet('static/index.html \u2014 Frontend web application'),
+          bullet('datasets/indiahire_bias.csv \u2014 Generated dataset'),
+          hr(),
+
+          // API Endpoints
+          heading('API Endpoints', HeadingLevel.HEADING_1),
+          new Table({
+            width: { size: 9000, type: WidthType.DXA },
+            rows: [
+              new TableRow({ children: [
+                tableCell('Endpoint', { bold: true, shading: 'EFF6FF', width: 2500 }),
+                tableCell('Method', { bold: true, shading: 'EFF6FF', width: 1200 }),
+                tableCell('Description', { bold: true, shading: 'EFF6FF', width: 5300 }),
+              ]}),
+              new TableRow({ children: [tableCell('/', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Web application', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/health', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Health check with version info', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/demo', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Run full audit on IndiaHire dataset', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/predict', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Predict outcome for a single student', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/compare', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Compare two profiles side-by-side', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/batch', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Batch prediction for multiple students', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/analyze', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Upload and audit your own CSV dataset', { width: 5300 })]}),
+              new TableRow({ children: [tableCell('/api/dataset/stats', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Quick summary stats of loaded dataset', { width: 5300 })]}),
+            ],
+          }),
+          hr(),
+
+          // Key Features
+          heading('Key Features', HeadingLevel.HEADING_1),
+
+          heading('1. Bias Exposer (Scenario Comparison)', HeadingLevel.HEADING_2),
+          para('Compare two profiles \u2014 same skills, different demographics. Watch how bias changes the outcome in real time.'),
+
+          heading('2. Real ML Metrics', HeadingLevel.HEADING_2),
+          para('Genuine train/test split (75/25) with actual Accuracy, Precision, Recall, F1 Score, and 5-Fold Cross-Validation.'),
+
+          heading('3. Student Predictor', HeadingLevel.HEADING_2),
+          para('Enter any student\'s details \u2192 get biased vs fair predictions, rejection reasons explained in plain English, bias factors highlighted, and actionable improvement tips.'),
+
+          heading('4. One-Click Mitigation', HeadingLevel.HEADING_2),
+          para('Reweighing algorithm adjusts training sample weights so underrepresented groups carry equal influence. Bias removed with minimal accuracy tradeoff.'),
+
+          heading('5. Ground Truth Validation', HeadingLevel.HEADING_2),
+          para('The actual_performance_score column proves the bias was irrational \u2014 rejected women would have performed equally or better than those hired.'),
+          hr(),
+
+          // ML Pipeline
+          heading('ML Pipeline', HeadingLevel.HEADING_1),
+          para('CSV Dataset \u2192 Encode & Scale \u2192 Train/Test Split (75/25)'),
+          bullet('Biased Model: Logistic Regression trained on raw data'),
+          bullet('Fair Model: Logistic Regression trained with Reweighing sample weights'),
+          bullet('Fairness Metrics computed on both \u2192 Compare Before vs After'),
+          bullet('Visual Report with Charts, Verdicts, and Before/After panels'),
+          hr(),
+
+          // Fairness Metrics
+          heading('Fairness Metrics Explained', HeadingLevel.HEADING_1),
+
+          heading('Disparate Impact (DI)', HeadingLevel.HEADING_2),
+          para('DI = P(Hire | Female) / P(Hire | Male). Threshold: >= 0.80 (80% rule). Values below 0.80 indicate significant bias against the unprivileged group.'),
+
+          heading('Statistical Parity Difference (SPD)', HeadingLevel.HEADING_2),
+          para('SPD = P(Hire | Female) - P(Hire | Male). Ideal: 0.00. Negative values mean females are hired at a lower rate.'),
+
+          heading('Equal Opportunity Difference', HeadingLevel.HEADING_2),
+          para('Difference in True Positive Rates between groups. Measures whether qualified candidates from both groups have equal chances of being correctly identified.'),
+
+          heading('Average Odds Difference', HeadingLevel.HEADING_2),
+          para('Average of TPR difference and FPR difference between groups. A comprehensive fairness measure that considers both types of errors.'),
+          hr(),
+
+          // Reweighing Mitigation
+          heading('Reweighing Mitigation', HeadingLevel.HEADING_1),
+          para('Reweighing is a pre-processing fairness mitigation technique that adjusts the weights of training samples to ensure fair representation:'),
+          bullet('Step 1: Compute expected probability of each (group, label) combination assuming independence'),
+          bullet('Step 2: Compute observed probability of each (group, label) combination in the training data'),
+          bullet('Step 3: Weight = Expected / Observed for each sample'),
+          bullet('Step 4: Retrain the model using these sample weights'),
+          para('This ensures underrepresented group-label combinations get higher weights, compensating for historical bias.'),
+          hr(),
+
+          // Impact
+          heading('Real-World Impact', HeadingLevel.HEADING_1),
+          para('Bias Breakers addresses a critical problem in AI-driven hiring:'),
+          bullet('34% gender hiring gap in Indian tech \u2014 invisible until audited'),
+          bullet('5,000 research-grounded records with 6 documented bias patterns'),
+          bullet('From CSV upload to full bias audit in under 90 seconds'),
+          bullet('One-click mitigation \u2014 bias fixed before deployment'),
+          para('The platform demonstrates that fairness and accuracy are not mutually exclusive \u2014 bias can be removed with minimal accuracy tradeoff, typically less than 2%.'),
+          hr(),
+
+          // Footer
+          new Paragraph({
+            spacing: { before: 400 },
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: 'Built for Hackathon \u2014 Problem 4: Unbiased AI Decision Making | v2.0', font: 'Calibri', size: 20, color: GRAY, italics: true })],
+          }),
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: 'Generated by Bias Breakers Platform \u2014 ' + new Date().toLocaleDateString(), font: 'Calibri', size: 18, color: GRAY })],
+          }),
+        ],
+      }],
+    });
+
+    const blob = await Packer.toBlob(doc);
+    saveAs(blob, 'bias_breakers_documentation.docx');
   }
 
 </script>
