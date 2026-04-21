@@ -18,6 +18,12 @@ from typing import Optional, List
 
 from bias_engine import BiasEngine
 
+import subprocess, pathlib
+
+# Auto-generate dataset if missing (needed on cloud deploy)
+if not pathlib.Path("datasets").exists():
+    subprocess.run(["python", "generate_dataset.py"], check=True)
+
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Bias Breakers",
@@ -167,3 +173,9 @@ async def dataset_stats():
 
 # Static files last (so API routes are not shadowed)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# ── Render.com entrypoint ─────────────────────────────────────────────────────
+if __name__ == "__main__":
+    import uvicorn, os
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
