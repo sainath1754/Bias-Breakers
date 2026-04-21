@@ -6,6 +6,24 @@ Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring mo
 
 ---
 
+<div align="center">
+
+### 🌐 Live Demo
+
+<a href="https://bias-breakers.onrender.com/">
+  <img src="https://img.shields.io/badge/🚀_View_My_Project-Live_on_Render-4c1d95?style=for-the-badge&logo=render&logoColor=white&labelColor=7c3aed" alt="View My Project" height="50"/>
+</a>
+
+<br/><br/>
+
+> **✨ Try it now → [https://bias-breakers.onrender.com/](https://bias-breakers.onrender.com/) ✨**
+>
+> _Experience AI bias detection, explanation & mitigation — live in your browser!_
+
+</div>
+
+---
+
 ## 🚀 Quick Start
 
 ```bash
