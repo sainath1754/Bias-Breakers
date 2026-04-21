@@ -733,7 +733,7 @@
       <a class="nav-link" href="#demo">Demo</a>
       <a class="nav-link" href="#upload">Upload</a>
       <a class="nav-link" href="#about">About</a>
-      <a class="nav-link" href="#" onclick="event.preventDefault();downloadDocx()" style="color:var(--purple);font-weight:600;">📄 Docs</a>
+
       <button class="nav-btn" onclick="scrollToDemo()">Run Audit →</button>
     </div>
   </div>
@@ -1329,18 +1329,8 @@
       <a href="#upload">Upload</a>
       <a href="#about">How It Works</a>
     </div>
-    <div style="margin-top:20px;">
-      <button onclick="downloadDocx()" style="
-        padding:10px 24px; background:rgba(255,255,255,.12); color:#fff;
-        border:1px solid rgba(255,255,255,.2); border-radius:var(--radius-sm);
-        font-size:13px; font-weight:500; cursor:pointer;
-        transition:background .15s;
-      " onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
-        📄 Download Documentation (.docx)
-      </button>
-    </div>
-    <div style="margin-top:16px; font-size:12px; color:rgba(255,255,255,.35);">
-      Built for Hackathon — Problem 4: Unbiased AI Decision Making &nbsp;|&nbsp; v2.0
+    <div style="margin-top:20px; font-size:13px; color:rgba(255,255,255,.5);">
+      Built for Hackathon — Problem 4: Unbiased AI Decision Making &nbsp;|&nbsp; Built by MISS🤍
     </div>
   </div>
 </footer>
@@ -1766,7 +1756,9 @@
 
     let improveHtml = '';
     if (d.improvements.length) {
-      const items = d.improvements.map(imp => `
+      const items = d.improvements.map(imp => {
+        const pct = Math.min(Math.round((imp.current_val / imp.target_val) * 100), 100);
+        return `
         <div class="improve-card">
           <div class="improve-title">
             ${imp.label}
@@ -1774,10 +1766,10 @@
           </div>
           <div style="font-size:12.5px;color:var(--text-2)">${imp.tip}</div>
           <div class="improve-bar-wrap">
-            <div class="improve-bar" style="width:${imp.current_val}%"></div>
+            <div class="improve-bar" style="width:${pct}%"></div>
           </div>
-        </div>`
-      ).join('');
+        </div>`;
+      }).join('');
       improveHtml = `
         <div>
           <div class="card-title" style="margin-bottom:8px">What to Improve to Boost Chances</div>

@@ -294,20 +294,22 @@ class BiasEngine:
                         _rejection_reason(f, student.get(f), pct)
                     )
 
+        # Each improvable field has its own threshold and target appropriate to its scale
         IMPROVABLE = {
-            "skills_score":       ("Skills Score",        "Improve technical skills — aim for 80+. Consider online certifications."),
-            "experience_years":   ("Experience",          "Gain more relevant work experience or internships."),
-            "communication_score":("Communication Score", "Improve communication — practice mock interviews, public speaking."),
+            #  field:            (label,               threshold, target, tip)
+            "skills_score":       ("Skills Score",        70,  80,  "Improve technical skills — aim for 80+. Consider online certifications."),
+            "experience_years":   ("Experience (years)",   3,   5,  "Gain more relevant work experience or internships (target: 5+ years)."),
+            "communication_score":("Communication Score", 70,  80,  "Improve communication — practice mock interviews, public speaking."),
         }
         improvements = []
-        for f, (label, tip) in IMPROVABLE.items():
+        for f, (label, threshold, target, tip) in IMPROVABLE.items():
             val = student.get(f, 0)
-            if isinstance(val, (int, float)) and val < 70:
+            if isinstance(val, (int, float)) and val < threshold:
                 improvements.append({
                     "field":       f,
                     "label":       label,
                     "current_val": round(float(val), 1),
-                    "target_val":  80,
+                    "target_val":  target,
                     "tip":         tip,
                 })
 
