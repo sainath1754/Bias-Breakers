@@ -131,6 +131,17 @@ The demo covers:
 
 ---
 
+## 👥 Team — Bias Breakers
+
+| Role | GitHub |
+|------|--------|
+| 🏆 Team Leader | [@Indukola](https://github.com/Indukola) |
+| 👤 Member 1 | [@manjushagudimella](https://github.com/manjushagudimella) |
+| 👤 Member 2 | [@saimaheswari19](https://github.com/saimaheswari19) |
+| 👤 Member 3 | [@sainath1754](https://github.com/sainath1754) |
+
+---
+
 ## 📎 Links
 
 - 🌐 **Live App**: https://bias-breakers.onrender.com
