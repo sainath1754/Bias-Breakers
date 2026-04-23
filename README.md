@@ -1,61 +1,48 @@
-# Bias Breakers v2.0 ⚖️
+# Bias Breakers ⚖️
 
-**AI-Powered Bias Detection, Explanation & Mitigation Platform**
+**AI-Powered Bias Detection, Explanation & Fairness Mitigation Platform**
 
-Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models — before they affect real people. It uses real ML pipelines with genuine train/test evaluation to prove bias exists and then removes it using Reweighing mitigation.
+Bias Breakers detects, explains, and fixes hidden discrimination in AI models — before they affect real people.
 
----
-
-<div align="center">
-
-### 🌐 Live Demo
-
-<a href="https://bias-breakers.onrender.com/">
-  <img src="https://img.shields.io/badge/🚀_View_My_Project-Live_on_Render-4c1d95?style=for-the-badge&logo=render&logoColor=white&labelColor=7c3aed" alt="View My Project" height="50"/>
-</a>
-
-<br/><br/>
-
-> **✨ Try it now → [https://bias-breakers.onrender.com/](https://bias-breakers.onrender.com/) ✨**
->
-> _Experience AI bias detection, explanation & mitigation — live in your browser!_
-
-</div>
+> Built for Hackathon — Problem 4: Unbiased AI Decision Making
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Create virtual environment
+# 1. Clone & create virtual environment
+git clone https://github.com/sainath1754/Bias-Breakers.git
+cd Bias-Breakers
 python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # Mac/Linux
+source venv/bin/activate      # Mac/Linux
+# venv\Scripts\activate       # Windows
 
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Generate the dataset
+# 3. (Optional) Set LLM API key for AI-generated plain-English reports
+export ANTHROPIC_API_KEY=your_key_here
+
+# 4. Generate dataset
 python generate_dataset.py
 
-# 4. Start server
-python -m uvicorn main:app --reload
-
-# 5. Open browser
-# http://127.0.0.1:8000
+# 5. Start server
+uvicorn main:app --reload
 ```
+
+Open **http://127.0.0.1:8000** in your browser.
 
 ---
 
 ## 🎯 What It Does
 
-| Step | Action |
-|------|--------|
-| **Detect** | Computes fairness metrics (Disparate Impact, Statistical Parity Difference) on real train/test splits |
-| **Explain** | Feature attribution pinpoints the exact cause of bias with contribution percentages |
-| **Fix** | Reweighing mitigation adjusts sample weights — one click, bias removed before deployment |
-| **Compare** | Side-by-side Bias Exposer shows how two identical profiles get different outcomes due to bias |
-| **Predict** | Individual student predictor with rejection reasons, bias factors, and improvement tips |
+| Step | Action | Technology |
+|------|--------|------------|
+| **Detect** | Computes 4 fairness metrics (Disparate Impact, SPD, EOD, AOD) | scikit-learn, pandas |
+| **Explain** | SHAP-based mean absolute attribution — pinpoints exact cause of bias | SHAP LinearExplainer |
+| **Fix** | Reweighing mitigation — one click, bias reduced before deployment | Custom reweighing algorithm |
+| **Report** | Plain-English AI-generated audit report for non-technical stakeholders | Anthropic Claude API |
 
 ---
 
@@ -67,20 +54,20 @@ python -m uvicorn main:app --reload
 - **Geographic bias** — Tier-3 city candidates penalised 28%
 - **Institution bias** — Non-IIT/NIT candidates penalised 41%
 - **Career gap penalty** — Disproportionately affects women (maternity/care leave)
-- **Referral advantage** — Men receive 2x more referrals
+- **Referral advantage** — Men receive 2× more referrals
 - **Age bias** — Candidates 38+ face 22% lower selection rate
 
-**Ground truth column** (`actual_performance_score`) proves bias was irrational — rejected candidates performed just as well.
+**Ground truth column** (`actual_performance_score`) proves bias was irrational — rejected candidates perform just as well post-hire.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend** — Python 3.12, FastAPI, Pydantic
-- **ML Engine** — scikit-learn (Logistic Regression, Reweighing, Cross-Validation)
-- **Data** — pandas, numpy
-- **Frontend** — HTML5, CSS3, Vanilla JavaScript, Chart.js
-- **Architecture** — REST API, Single-Page Application
+- **Backend** — Python 3.11, FastAPI, scikit-learn, pandas, numpy
+- **Frontend** — HTML5, CSS3, Vanilla JS, Chart.js
+- **ML** — Logistic Regression with Reweighing mitigation (IBM AIF360 method)
+- **Explainability** — SHAP LinearExplainer (mean |SHAP| attribution per feature)
+- **AI Report** — Anthropic Claude API (plain-English audit summary for HR teams)
 
 ---
 
@@ -88,68 +75,77 @@ python -m uvicorn main:app --reload
 
 ```
 bias-breakers/
-├── main.py                 FastAPI application (7 API endpoints)
-├── bias_engine.py          ML bias detection & mitigation engine
-├── generate_dataset.py     Synthetic dataset generator
-├── requirements.txt        Python dependencies
-├── commands.txt            Setup & run guide
-├── README.md               This file
-├── static/
-│   └── index.html          Frontend web application
-└── datasets/
-    └── indiahire_bias.csv  Generated dataset (after running generator)
+├── main.py               FastAPI application (v3.0)
+├── bias_engine.py        ML bias detection + SHAP + LLM report
+├── generate_dataset.py   IndiaHire-Bias dataset generator
+├── requirements.txt      Dependencies
+├── static/index.html     Web frontend
+└── datasets/             Generated CSV files
 ```
 
 ---
 
-## 🔗 API Endpoints
+## 🔗 API Reference
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/` | GET | Web application |
-| `/api/health` | GET | Health check with version info |
-| `/api/demo` | GET | Run full audit on IndiaHire dataset |
-| `/api/predict` | POST | Predict outcome for a single student |
-| `/api/compare` | POST | Compare two profiles side-by-side |
-| `/api/batch` | POST | Batch prediction for multiple students |
-| `/api/analyze` | POST | Upload and audit your own CSV dataset |
-| `/api/dataset/stats` | GET | Quick summary stats of loaded dataset |
+| `/api/demo` | GET | Full audit on IndiaHire-Bias dataset |
+| `/api/analyze` | POST | Audit your own CSV file |
+| `/api/predict` | POST | Predict outcome for one candidate |
+| `/api/compare` | POST | Side-by-side comparison of two profiles |
+| `/api/batch` | POST | Batch predict up to 50 candidates |
+| `/api/report` | POST | Generate LLM plain-English audit report |
+| `/api/dataset/stats` | GET | Dataset summary statistics |
+| `/api/health` | GET | Health check |
 
 ---
 
-## 🔬 Key Features
+## 🔒 Privacy & Security
 
-### 1. Bias Exposer (Scenario Comparison)
-Compare two profiles — same skills, different demographics. Watch how bias changes the outcome in real time.
-
-### 2. Real ML Metrics
-Genuine train/test split (75/25) with actual Accuracy, Precision, Recall, F1 Score, and 5-Fold Cross-Validation.
-
-### 3. Student Predictor
-Enter any student's details → get biased vs fair predictions, rejection reasons explained in plain English, bias factors highlighted, and actionable improvement tips.
-
-### 4. One-Click Mitigation
-Reweighing algorithm adjusts training sample weights so underrepresented groups carry equal influence. Bias removed with minimal accuracy tradeoff.
-
-### 5. Ground Truth Validation
-The `actual_performance_score` column proves the bias was irrational — rejected women would have performed equally or better than those hired.
+- **Uploaded data is processed entirely in-memory** and is never written to disk or stored after the request completes.
+- No user data is logged, retained, or shared with third parties.
+- All API responses include an `X-Data-Privacy` header confirming this policy.
+- The `ANTHROPIC_API_KEY` is read from environment variables only — never hardcoded.
 
 ---
 
-## 📈 ML Pipeline
+## 📈 Scalability
 
-```
-CSV Dataset → Encode & Scale → Train/Test Split (75/25)
-    ↓                              ↓
-Biased Model (LR)           Reweighed Model (LR + sample weights)
-    ↓                              ↓
-Fairness Metrics             Fairness Metrics
-    ↓                              ↓
-    └──── Compare Before vs After ────┘
-                   ↓
-          Visual Report + Verdicts
-```
+- **Stateless engine** — `BiasEngine` holds no request-level state, making it safe for multi-worker deployment.
+- Run with multiple workers: `gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app`
+- Large CSVs are streamed into pandas in-memory; no temp files are created.
+- Batch endpoint supports up to 50 candidates per call; for larger audits, use `/api/analyze` with a full CSV.
 
 ---
 
-*Built for Hackathon — Problem 4: Unbiased AI Decision Making | v2.0*
+## 🎬 Demo Video
+
+> 📹 [Watch the demo](#) — *link to be added*
+
+The demo covers:
+1. Running the built-in IndiaHire-Bias audit
+2. Scenario comparison — identical profiles, different gender
+3. Uploading a custom CSV and getting a fairness report
+4. Generating an LLM-written plain-English audit summary
+
+---
+
+## 📎 Links
+
+- 🌐 **Live App**: https://bias-breakers.onrender.com
+- 💻 **GitHub**: https://github.com/sainath1754/Bias-Breakers
+- 📊 **Project Deck**: *[add link]*
+
+---
+
+## 🏆 Evaluation Alignment
+
+| Criterion | Implementation |
+|-----------|---------------|
+| Technical complexity | Real train/test split, 5-fold CV, SHAP explanations, reweighing algorithm |
+| AI integration | SHAP LinearExplainer + Anthropic Claude API for human-readable reports |
+| Performance & scalability | Stateless FastAPI, multi-worker ready, in-memory CSV processing |
+| Security & privacy | In-memory only, env-var secrets, privacy response headers |
+| Alignment with cause | Detect + Explain + Fix pipeline; covers hiring bias with ground-truth proof |
+| Innovation | India-specific dataset with 6 bias patterns; side-by-side scenario comparison; LLM audit reports |
