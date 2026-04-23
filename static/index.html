@@ -1,48 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bias Breakers — AI Fairness Auditor</title>
-  <meta name="description" content="Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models. Upload any dataset and get a full fairness audit in seconds." />
+  <meta name="description"
+    content="Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models. Upload any dataset and get a full fairness audit in seconds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --blue:        #2563eb;
-      --blue-dark:   #1d4ed8;
-      --blue-light:  #eff6ff;
-      --blue-mid:    #dbeafe;
-      --green:       #16a34a;
-      --green-light: #f0fdf4;
-      --red:         #dc2626;
-      --red-light:   #fef2f2;
-      --amber:       #d97706;
-      --amber-light: #fffbeb;
-      --purple:      #7c3aed;
-      --purple-light:#f5f3ff;
-      --text:        #111827;
-      --text-2:      #374151;
-      --text-3:      #6b7280;
-      --text-4:      #9ca3af;
-      --border:      #e5e7eb;
-      --border-2:    #d1d5db;
-      --bg:          #f9fafb;
-      --white:       #ffffff;
-      --shadow-sm:   0 1px 2px rgba(0,0,0,.05);
-      --shadow:      0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
-      --shadow-md:   0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.05);
-      --shadow-lg:   0 10px 25px rgba(0,0,0,.09), 0 4px 10px rgba(0,0,0,.05);
-      --radius:      10px;
-      --radius-sm:   6px;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html { scroll-behavior: smooth; }
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-light: #eff6ff;
+      --blue-mid: #dbeafe;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --text: #111827;
+      --text-2: #374151;
+      --text-3: #6b7280;
+      --text-4: #9ca3af;
+      --border: #e5e7eb;
+      --border-2: #d1d5db;
+      --bg: #f9fafb;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, .07), 0 2px 4px rgba(0, 0, 0, .05);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, .09), 0 4px 10px rgba(0, 0, 0, .05);
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -55,58 +67,102 @@
 
     /* ── NAVBAR ──────────────────────────────────────────────────────── */
     nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,.96);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, .96);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
+
     .nav-inner {
-      max-width: 1100px; margin: 0 auto;
+      max-width: 1100px;
+      margin: 0 auto;
       padding: 0 24px;
       height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+
     .nav-logo {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none; color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
     }
+
     .nav-logo-icon {
-      width: 32px; height: 32px; border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       background: var(--blue);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
     }
+
     .nav-logo-text {
       font-family: 'Lora', serif;
-      font-size: 17px; font-weight: 700;
+      font-size: 17px;
+      font-weight: 700;
       letter-spacing: -.01em;
     }
-    .nav-links { display: flex; align-items: center; gap: 6px; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .nav-link {
       padding: 6px 14px;
-      font-size: 13.5px; font-weight: 500;
+      font-size: 13.5px;
+      font-weight: 500;
       color: var(--text-3);
       text-decoration: none;
       border-radius: var(--radius-sm);
       transition: color .15s, background .15s;
     }
-    .nav-link:hover { color: var(--text); background: var(--bg); }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: var(--bg);
+    }
+
     .nav-btn {
       padding: 7px 16px;
       background: var(--blue);
       color: #fff;
-      font-size: 13.5px; font-weight: 500;
-      border: none; border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-sm);
       cursor: pointer;
       transition: background .15s;
     }
-    .nav-btn:hover { background: var(--blue-dark); }
+
+    .nav-btn:hover {
+      background: var(--blue-dark);
+    }
 
     /* ── LAYOUT ──────────────────────────────────────────────────────── */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
 
-    section { padding: 72px 0; }
-    section + section { padding-top: 0; }
+    section {
+      padding: 72px 0;
+    }
+
+    section+section {
+      padding-top: 0;
+    }
 
     /* ── HERO ────────────────────────────────────────────────────────── */
     .hero {
@@ -114,68 +170,128 @@
       background: var(--white);
       border-bottom: 1px solid var(--border);
     }
+
     .hero-inner {
-      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
       display: grid;
       grid-template-columns: 1fr 420px;
       gap: 64px;
       align-items: center;
     }
+
     .hero-label {
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       padding: 4px 12px;
       background: var(--blue-light);
       color: var(--blue);
-      font-size: 12px; font-weight: 600;
-      letter-spacing: .04em; text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
       border-radius: 20px;
       margin-bottom: 20px;
     }
+
     .hero-label-dot {
-      width: 6px; height: 6px; border-radius: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
       background: var(--blue);
       animation: blink 2s infinite;
     }
-    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .3
+      }
+    }
 
     h1 {
       font-family: 'Lora', serif;
-      font-size: 46px; font-weight: 700;
-      line-height: 1.15; letter-spacing: -.02em;
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.02em;
       margin-bottom: 20px;
     }
-    h1 em { font-style: italic; color: var(--blue); }
-    .hero-sub {
-      font-size: 17px; color: var(--text-2); line-height: 1.7;
-      margin-bottom: 32px; max-width: 480px;
+
+    h1 em {
+      font-style: italic;
+      color: var(--blue);
     }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 480px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
     .btn {
-      display: inline-flex; align-items: center; gap: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 11px 22px;
-      font-size: 14px; font-weight: 500;
+      font-size: 14px;
+      font-weight: 500;
       border-radius: var(--radius-sm);
-      border: none; cursor: pointer;
+      border: none;
+      cursor: pointer;
       transition: all .15s;
       text-decoration: none;
     }
+
     .btn-primary {
-      background: var(--blue); color: #fff;
-      box-shadow: 0 1px 3px rgba(37,99,235,.3);
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(37, 99, 235, .3);
     }
-    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,.35); }
+
+    .btn-primary:hover {
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, .35);
+    }
+
     .btn-outline {
-      background: var(--white); color: var(--text);
+      background: var(--white);
+      color: var(--text);
       border: 1px solid var(--border-2);
       box-shadow: var(--shadow-sm);
     }
-    .btn-outline:hover { background: var(--bg); border-color: #b0b7c3; }
-    .btn-purple {
-      background: var(--purple); color: #fff;
-      box-shadow: 0 1px 3px rgba(124,58,237,.3);
+
+    .btn-outline:hover {
+      background: var(--bg);
+      border-color: #b0b7c3;
     }
-    .btn-purple:hover { background: #6d28d9; transform: translateY(-1px); }
+
+    .btn-purple {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(124, 58, 237, .3);
+    }
+
+    .btn-purple:hover {
+      background: #6d28d9;
+      transform: translateY(-1px);
+    }
 
     /* Hero card */
     .hero-card {
@@ -185,83 +301,142 @@
       padding: 24px;
       box-shadow: var(--shadow-lg);
     }
+
     .hc-title {
-      font-size: 12px; font-weight: 600; color: var(--text-3);
-      letter-spacing: .06em; text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+      letter-spacing: .06em;
+      text-transform: uppercase;
       margin-bottom: 16px;
     }
-    .hc-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .hc-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
     .hc-stat {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 14px;
     }
+
     .hc-stat-val {
       font-family: 'Lora', serif;
-      font-size: 26px; font-weight: 700;
+      font-size: 26px;
+      font-weight: 700;
       line-height: 1;
     }
-    .hc-stat-lbl { font-size: 12px; color: var(--text-3); margin-top: 4px; }
-    .hc-stat.danger .hc-stat-val { color: var(--red); }
-    .hc-stat.success .hc-stat-val { color: var(--green); }
-    .hc-stat.warn .hc-stat-val { color: var(--amber); }
-    .hc-stat.info .hc-stat-val { color: var(--blue); }
+
+    .hc-stat-lbl {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .hc-stat.danger .hc-stat-val {
+      color: var(--red);
+    }
+
+    .hc-stat.success .hc-stat-val {
+      color: var(--green);
+    }
+
+    .hc-stat.warn .hc-stat-val {
+      color: var(--amber);
+    }
+
+    .hc-stat.info .hc-stat-val {
+      color: var(--blue);
+    }
+
     .hc-divider {
-      border: none; border-top: 1px solid var(--border);
+      border: none;
+      border-top: 1px solid var(--border);
       margin: 16px 0;
     }
+
     .hc-story {
-      font-size: 13px; color: var(--text-2);
+      font-size: 13px;
+      color: var(--text-2);
       line-height: 1.6;
       background: var(--red-light);
       border-left: 3px solid var(--red);
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       padding: 10px 14px;
     }
-    .hc-story strong { color: var(--red); }
+
+    .hc-story strong {
+      color: var(--red);
+    }
 
     /* ── STATS BAND ──────────────────────────────────────────────────── */
     .stats-band {
       background: var(--blue);
       padding: 40px 0;
     }
+
     .stats-inner {
-      max-width: 1100px; margin: 0 auto; padding: 0 24px;
-      display: grid; grid-template-columns: repeat(4,1fr);
-      gap: 1px; background: rgba(255,255,255,.2);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(255, 255, 255, .2);
     }
+
     .stat-item {
       background: var(--blue);
       padding: 28px 32px;
       text-align: center;
     }
+
     .stat-num {
       font-family: 'Lora', serif;
-      font-size: 38px; font-weight: 700;
-      color: #fff; line-height: 1;
+      font-size: 38px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
     }
-    .stat-desc { font-size: 13px; color: rgba(255,255,255,.72); margin-top: 6px; }
+
+    .stat-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, .72);
+      margin-top: 6px;
+    }
 
     /* ── SECTION TITLES ──────────────────────────────────────────────── */
     .section-tag {
       display: inline-block;
-      font-size: 11.5px; font-weight: 600;
-      letter-spacing: .08em; text-transform: uppercase;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
       color: var(--blue);
       margin-bottom: 10px;
     }
+
     h2 {
       font-family: 'Lora', serif;
-      font-size: 32px; font-weight: 700;
+      font-size: 32px;
+      font-weight: 700;
       letter-spacing: -.02em;
       margin-bottom: 12px;
     }
+
     .section-sub {
-      font-size: 16px; color: var(--text-2);
+      font-size: 16px;
+      color: var(--text-2);
       max-width: 540px;
     }
-    .section-head { margin-bottom: 40px; }
+
+    .section-head {
+      margin-bottom: 40px;
+    }
 
     /* ── CARDS ───────────────────────────────────────────────────────── */
     .card {
@@ -271,15 +446,23 @@
       padding: 24px;
       box-shadow: var(--shadow);
     }
+
     .card-title {
-      font-size: 13px; font-weight: 600;
+      font-size: 13px;
+      font-weight: 600;
       color: var(--text-3);
-      letter-spacing: .05em; text-transform: uppercase;
+      letter-spacing: .05em;
+      text-transform: uppercase;
       margin-bottom: 8px;
     }
 
     /* ── METRIC CARDS ────────────────────────────────────────────────── */
-    .metric-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
     .metric-card {
       background: var(--white);
       border: 1px solid var(--border);
@@ -289,50 +472,130 @@
       position: relative;
       overflow: hidden;
     }
+
     .metric-card::before {
       content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
     }
-    .metric-card.fail::before   { background: var(--red); }
-    .metric-card.warn::before   { background: var(--amber); }
-    .metric-card.pass::before   { background: var(--green); }
-    .metric-card.neutral::before{ background: var(--blue); }
 
-    .metric-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); letter-spacing:.05em; text-transform:uppercase; }
-    .metric-val { font-family:'Lora',serif; font-size:32px; font-weight:700; line-height:1; margin: 8px 0 4px; }
-    .metric-val.fail   { color: var(--red); }
-    .metric-val.warn   { color: var(--amber); }
-    .metric-val.pass   { color: var(--green); }
-    .metric-val.neutral{ color: var(--blue); }
-    .metric-desc { font-size: 12px; color: var(--text-3); }
+    .metric-card.fail::before {
+      background: var(--red);
+    }
+
+    .metric-card.warn::before {
+      background: var(--amber);
+    }
+
+    .metric-card.pass::before {
+      background: var(--green);
+    }
+
+    .metric-card.neutral::before {
+      background: var(--blue);
+    }
+
+    .metric-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-3);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .metric-val {
+      font-family: 'Lora', serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 8px 0 4px;
+    }
+
+    .metric-val.fail {
+      color: var(--red);
+    }
+
+    .metric-val.warn {
+      color: var(--amber);
+    }
+
+    .metric-val.pass {
+      color: var(--green);
+    }
+
+    .metric-val.neutral {
+      color: var(--blue);
+    }
+
+    .metric-desc {
+      font-size: 12px;
+      color: var(--text-3);
+    }
 
     .badge {
-      display: inline-flex; align-items: center;
+      display: inline-flex;
+      align-items: center;
       padding: 3px 9px;
       border-radius: 20px;
-      font-size: 11px; font-weight: 600;
+      font-size: 11px;
+      font-weight: 600;
       letter-spacing: .04em;
     }
-    .badge-fail   { background: var(--red-light);   color: var(--red); }
-    .badge-warn   { background: var(--amber-light);  color: var(--amber); }
-    .badge-pass   { background: var(--green-light);  color: var(--green); }
-    .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+    .badge-fail {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .badge-warn {
+      background: var(--amber-light);
+      color: var(--amber);
+    }
+
+    .badge-pass {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .badge-purple {
+      background: var(--purple-light);
+      color: var(--purple);
+    }
 
     /* ── CHART AREA ──────────────────────────────────────────────────── */
-    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+
     .chart-wrap {
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 24px;
       box-shadow: var(--shadow);
-      min-width: 0; /* prevents grid blowout */
+      min-width: 0;
+      /* prevents grid blowout */
     }
+
     .chart-wrap h3 {
-      font-size: 14px; font-weight: 600; color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
       margin-bottom: 4px;
     }
-    .chart-sub { font-size: 12px; color: var(--text-3); margin-bottom: 18px; }
+
+    .chart-sub {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 18px;
+    }
+
     .chart-container {
       position: relative;
       width: 100%;
@@ -348,13 +611,24 @@
       gap: 24px;
       margin-top: 24px;
     }
+
     .ba-arrow {
-      display: flex; flex-direction: column; align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding-top: 36px;
       gap: 6px;
-      color: var(--text-3); font-size: 22px;
+      color: var(--text-3);
+      font-size: 22px;
     }
-    .ba-arrow span { font-size: 11px; font-weight: 600; letter-spacing:.06em; text-transform:uppercase; color: var(--blue); }
+
+    .ba-arrow span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
 
     .ba-panel {
       background: var(--white);
@@ -363,23 +637,56 @@
       overflow: hidden;
       box-shadow: var(--shadow);
     }
+
     .ba-panel-head {
       padding: 14px 20px;
-      font-size: 12px; font-weight: 600;
-      letter-spacing: .06em; text-transform: uppercase;
-      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .ba-panel.before .ba-panel-head { background: var(--red-light); color: var(--red); border-bottom: 1px solid #fee2e2; }
-    .ba-panel.after  .ba-panel-head { background: var(--green-light); color: var(--green); border-bottom: 1px solid #bbf7d0; }
-    .ba-panel-body { padding: 20px; }
+
+    .ba-panel.before .ba-panel-head {
+      background: var(--red-light);
+      color: var(--red);
+      border-bottom: 1px solid #fee2e2;
+    }
+
+    .ba-panel.after .ba-panel-head {
+      background: var(--green-light);
+      color: var(--green);
+      border-bottom: 1px solid #bbf7d0;
+    }
+
+    .ba-panel-body {
+      padding: 20px;
+    }
+
     .ba-row {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 8px 0;
       border-bottom: 1px solid var(--border);
     }
-    .ba-row:last-child { border-bottom: none; }
-    .ba-row-label { font-size: 13px; color: var(--text-2); }
-    .ba-row-val { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; }
+
+    .ba-row:last-child {
+      border-bottom: none;
+    }
+
+    .ba-row-label {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .ba-row-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+    }
 
     /* ── TABLE ───────────────────────────────────────────────────────── */
     .table-wrap {
@@ -390,25 +697,48 @@
       box-shadow: var(--shadow);
       margin-top: 24px;
     }
-    table { width: 100%; border-collapse: collapse; }
-    thead { background: var(--bg); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--bg);
+    }
+
     th {
       padding: 12px 16px;
-      font-size: 11.5px; font-weight: 600;
-      color: var(--text-3); letter-spacing:.05em; text-transform:uppercase;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-3);
+      letter-spacing: .05em;
+      text-transform: uppercase;
       text-align: left;
       border-bottom: 1px solid var(--border);
     }
+
     td {
       padding: 13px 16px;
-      font-size: 13.5px; color: var(--text-2);
+      font-size: 13.5px;
+      color: var(--text-2);
       border-bottom: 1px solid var(--border);
     }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--bg); }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--bg);
+    }
 
     /* ── UPLOAD ZONE ─────────────────────────────────────────────────── */
-    .upload-section { background: var(--white); border-bottom: 1px solid var(--border); }
+    .upload-section {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
     .upload-zone {
       border: 2px dashed var(--border-2);
       border-radius: var(--radius);
@@ -417,51 +747,124 @@
       cursor: pointer;
       transition: border-color .15s, background .15s;
     }
-    .upload-zone:hover, .upload-zone.drag-over {
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
       border-color: var(--blue);
       background: var(--blue-light);
     }
-    .upload-icon { font-size: 36px; margin-bottom: 12px; }
-    .upload-title { font-size: 16px; font-weight: 600; color: var(--text); }
-    .upload-sub { font-size: 13.5px; color: var(--text-3); margin-top: 4px; }
-    .upload-sub a { color: var(--blue); cursor: pointer; text-decoration: underline; }
+
+    .upload-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .upload-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .upload-sub {
+      font-size: 13.5px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .upload-sub a {
+      color: var(--blue);
+      cursor: pointer;
+      text-decoration: underline;
+    }
 
     /* ── RESULTS SECTION ─────────────────────────────────────────────── */
-    .results-section { background: var(--bg); }
+    .results-section {
+      background: var(--bg);
+    }
 
     /* ── GROUND TRUTH CALLOUT ────────────────────────────────────────── */
     .callout {
       border-radius: var(--radius);
       padding: 20px 24px;
       margin-top: 24px;
-      display: flex; gap: 16px;
+      display: flex;
+      gap: 16px;
       align-items: flex-start;
     }
-    .callout-red   { background: var(--red-light);   border: 1px solid #fecaca; }
-    .callout-green { background: var(--green-light);  border: 1px solid #bbf7d0; }
-    .callout-blue  { background: var(--blue-light);   border: 1px solid var(--blue-mid); }
-    .callout-purple{ background: var(--purple-light); border: 1px solid #c4b5fd; }
-    .callout-icon  { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
-    .callout-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .callout-body  { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+
+    .callout-red {
+      background: var(--red-light);
+      border: 1px solid #fecaca;
+    }
+
+    .callout-green {
+      background: var(--green-light);
+      border: 1px solid #bbf7d0;
+    }
+
+    .callout-blue {
+      background: var(--blue-light);
+      border: 1px solid var(--blue-mid);
+    }
+
+    .callout-purple {
+      background: var(--purple-light);
+      border: 1px solid #c4b5fd;
+    }
+
+    .callout-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .callout-body {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
 
     /* ── LOADING / STATES ────────────────────────────────────────────── */
     .spinner {
-      width: 20px; height: 20px;
+      width: 20px;
+      height: 20px;
       border: 2px solid var(--border);
       border-top-color: var(--blue);
       border-radius: 50%;
       animation: spin .7s linear infinite;
       display: inline-block;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     .loader-wrap {
-      padding: 64px; text-align: center;
+      padding: 64px;
+      text-align: center;
       display: none;
     }
-    .loader-wrap .spinner { width: 36px; height: 36px; border-width: 3px; margin-bottom: 16px; }
-    .loader-text { font-size: 14px; color: var(--text-3); }
+
+    .loader-wrap .spinner {
+      width: 36px;
+      height: 36px;
+      border-width: 3px;
+      margin-bottom: 16px;
+    }
+
+    .loader-text {
+      font-size: 14px;
+      color: var(--text-3);
+    }
 
     /* ── ALERT ───────────────────────────────────────────────────────── */
     .alert {
@@ -471,47 +874,104 @@
       display: none;
       margin-bottom: 16px;
     }
-    .alert-error { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+
+    .alert-error {
+      background: var(--red-light);
+      color: var(--red);
+      border: 1px solid #fecaca;
+    }
 
     /* ── PROGRESS BAR ────────────────────────────────────────────────── */
     .progress-bar-wrap {
-      height: 6px; background: var(--border);
-      border-radius: 3px; overflow: hidden;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
       margin-top: 6px;
     }
+
     .progress-bar {
-      height: 100%; border-radius: 3px;
+      height: 100%;
+      border-radius: 3px;
       transition: width .4s ease;
     }
-    .progress-bar.high   { background: var(--red); }
-    .progress-bar.medium { background: var(--amber); }
-    .progress-bar.low    { background: var(--green); }
+
+    .progress-bar.high {
+      background: var(--red);
+    }
+
+    .progress-bar.medium {
+      background: var(--amber);
+    }
+
+    .progress-bar.low {
+      background: var(--green);
+    }
 
     /* ── DIVIDER ─────────────────────────────────────────────────────── */
-    .divider { height: 1px; background: var(--border); margin: 40px 0; }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
 
     /* ── ABOUT ───────────────────────────────────────────────────────── */
-    .about-section { background: var(--white); border-top: 1px solid var(--border); }
-    .about-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-    .about-card { padding: 24px 0; }
-    .about-icon { font-size: 28px; margin-bottom: 12px; }
-    .about-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .about-desc { font-size: 13.5px; color: var(--text-3); line-height: 1.6; }
+    .about-section {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .about-card {
+      padding: 24px 0;
+    }
+
+    .about-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .about-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .about-desc {
+      font-size: 13.5px;
+      color: var(--text-3);
+      line-height: 1.6;
+    }
 
     /* ── FORM ELEMENTS ───────────────────────────────────────────────── */
     .form-label {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 12.5px; font-weight: 600; color: var(--text-2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-2);
       margin-bottom: 6px;
     }
+
     .form-hint {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; font-weight: 500; color: var(--blue);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--blue);
     }
+
     .form-input {
       width: 100%;
       padding: 9px 12px;
-      font-size: 14px; font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
       color: var(--text);
       background: var(--white);
       border: 1px solid var(--border-2);
@@ -519,10 +979,12 @@
       outline: none;
       transition: border-color .15s, box-shadow .15s;
     }
+
     .form-input:focus {
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
     }
+
     .form-range {
       width: 100%;
       -webkit-appearance: none;
@@ -532,9 +994,11 @@
       outline: none;
       cursor: pointer;
     }
+
     .form-range::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px; height: 16px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: var(--blue);
       border: 2px solid var(--white);
@@ -546,28 +1010,87 @@
     .verdict {
       border-radius: var(--radius);
       padding: 18px 20px;
-      display: flex; align-items: center; gap: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
       margin-bottom: 12px;
     }
-    .verdict-rejected { background: var(--red-light);   border: 1px solid #fecaca; }
-    .verdict-selected { background: var(--green-light);  border: 1px solid #bbf7d0; }
-    .verdict-neutral  { background: var(--blue-light);   border: 1px solid var(--blue-mid); }
-    .verdict-icon  { font-size: 28px; line-height:1; flex-shrink:0; }
-    .verdict-title { font-size: 15px; font-weight: 700; }
-    .verdict-sub   { font-size: 13px; color: var(--text-2); margin-top: 2px; }
 
-    .reason-list { list-style:none; display:flex; flex-direction:column; gap:6px; margin-top:8px; }
-    .reason-item {
-      display:flex; align-items:flex-start; gap:10px;
-      font-size:13px; color:var(--text-2);
-      background:var(--white); border:1px solid var(--border);
-      border-radius:var(--radius-sm); padding:10px 12px;
+    .verdict-rejected {
+      background: var(--red-light);
+      border: 1px solid #fecaca;
     }
-    .reason-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
-    .dot-red    { background:var(--red); }
-    .dot-amber  { background:var(--amber); }
-    .dot-blue   { background:var(--blue); }
-    .dot-green  { background:var(--green); }
+
+    .verdict-selected {
+      background: var(--green-light);
+      border: 1px solid #bbf7d0;
+    }
+
+    .verdict-neutral {
+      background: var(--blue-light);
+      border: 1px solid var(--blue-mid);
+    }
+
+    .verdict-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .verdict-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .verdict-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .reason-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .reason-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-2);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+
+    .reason-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .dot-red {
+      background: var(--red);
+    }
+
+    .dot-amber {
+      background: var(--amber);
+    }
+
+    .dot-blue {
+      background: var(--blue);
+    }
+
+    .dot-green {
+      background: var(--green);
+    }
 
     .improve-card {
       background: var(--blue-light);
@@ -576,9 +1099,27 @@
       padding: 12px 14px;
       margin-top: 6px;
     }
-    .improve-title { font-size:12.5px; font-weight:600; color:var(--blue); margin-bottom:4px; }
-    .improve-bar-wrap { height:5px; background:var(--border); border-radius:3px; margin-top:6px; }
-    .improve-bar { height:100%; border-radius:3px; background:var(--blue); transition:width .5s ease; }
+
+    .improve-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+
+    .improve-bar-wrap {
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-top: 6px;
+    }
+
+    .improve-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--blue);
+      transition: width .5s ease;
+    }
 
     /* ── SCENARIO COMPARE ────────────────────────────────────────────── */
     .compare-section {
@@ -586,12 +1127,14 @@
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
+
     .compare-grid {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       gap: 24px;
       align-items: start;
     }
+
     .compare-profile {
       background: var(--white);
       border: 1px solid var(--border);
@@ -599,24 +1142,37 @@
       padding: 24px;
       box-shadow: var(--shadow);
     }
+
     .compare-profile h3 {
-      font-size: 14px; font-weight: 600;
+      font-size: 14px;
+      font-weight: 600;
       margin-bottom: 16px;
-      display: flex; align-items: center; gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
     .compare-vs {
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding-top: 40px;
     }
+
     .compare-vs-badge {
-      width: 48px; height: 48px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: var(--purple);
       color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700;
-      box-shadow: 0 4px 12px rgba(124,58,237,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, .3);
     }
+
     .compare-result {
       background: var(--white);
       border: 1px solid var(--border);
@@ -625,6 +1181,7 @@
       box-shadow: var(--shadow);
       margin-top: 24px;
     }
+
     .compare-result-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -639,6 +1196,7 @@
       gap: 10px;
       margin-top: 16px;
     }
+
     .model-detail-card {
       background: var(--bg);
       border: 1px solid var(--border);
@@ -646,13 +1204,17 @@
       padding: 14px;
       text-align: center;
     }
+
     .model-detail-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 20px; font-weight: 700;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--blue);
     }
+
     .model-detail-label {
-      font-size: 11px; font-weight: 600;
+      font-size: 11px;
+      font-weight: 600;
       color: var(--text-3);
       text-transform: uppercase;
       letter-spacing: .05em;
@@ -662,10 +1224,11 @@
     /* ── FOOTER ───────────────────────────────────────────────────────── */
     .footer {
       background: var(--text);
-      color: rgba(255,255,255,.6);
+      color: rgba(255, 255, 255, .6);
       padding: 40px 0;
       text-align: center;
     }
+
     .footer-title {
       font-family: 'Lora', serif;
       font-size: 18px;
@@ -673,264 +1236,338 @@
       color: #fff;
       margin-bottom: 8px;
     }
-    .footer-sub { font-size: 13px; }
+
+    .footer-sub {
+      font-size: 13px;
+    }
+
     .footer-links {
       margin-top: 16px;
-      display: flex; gap: 20px; justify-content: center;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
     }
+
     .footer-links a {
-      font-size: 13px; color: rgba(255,255,255,.5);
+      font-size: 13px;
+      color: rgba(255, 255, 255, .5);
       text-decoration: none;
       transition: color .15s;
     }
-    .footer-links a:hover { color: #fff; }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
 
     /* ── HIDDEN ──────────────────────────────────────────────────────── */
-    .hidden { display: none !important; }
+    .hidden {
+      display: none !important;
+    }
 
     /* ── ANIMATIONS ──────────────────────────────────────────────────── */
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .animate-in { animation: fadeInUp .5s ease forwards; }
+
+    .animate-in {
+      animation: fadeInUp .5s ease forwards;
+    }
 
     /* ── RESPONSIVE ──────────────────────────────────────────────────── */
     @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; }
-      .hero-card  { display: none; }
-      h1          { font-size: 36px; }
-      .metric-grid { grid-template-columns: 1fr 1fr; }
-      .charts-grid { grid-template-columns: 1fr; }
-      .ba-grid { grid-template-columns: 1fr; }
-      .ba-arrow { display: none; }
-      .stats-inner { grid-template-columns: 1fr 1fr; }
-      .about-grid { grid-template-columns: 1fr; }
-      .compare-grid { grid-template-columns: 1fr; }
-      .compare-vs { padding: 0; }
-      .model-detail-grid { grid-template-columns: 1fr 1fr; }
-      .chart-container { height: 260px; max-height: 260px; }
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        display: none;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ba-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ba-arrow {
+        display: none;
+      }
+
+      .stats-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-vs {
+        padding: 0;
+      }
+
+      .model-detail-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .chart-container {
+        height: 260px;
+        max-height: 260px;
+      }
     }
+
     @media (max-width: 600px) {
-      .metric-grid { grid-template-columns: 1fr; }
-      .nav-links .nav-link { display: none; }
-      .stats-inner { grid-template-columns: 1fr; }
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links .nav-link {
+        display: none;
+      }
+
+      .stats-inner {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- ── NAV ──────────────────────────────────────────────────────────────── -->
-<nav>
-  <div class="nav-inner">
-    <a class="nav-logo" href="#">
-      <div class="nav-logo-icon">⚖️</div>
-      <span class="nav-logo-text">Bias Breakers</span>
-    </a>
-    <div class="nav-links">
-      <a class="nav-link" href="#predict">Predict</a>
-      <a class="nav-link" href="#compare">Compare</a>
-      <a class="nav-link" href="#demo">Demo</a>
-      <a class="nav-link" href="#upload">Upload</a>
-      <a class="nav-link" href="#about">About</a>
+  <!-- ── NAV ──────────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="#">
+        <div class="nav-logo-icon">⚖️</div>
+        <span class="nav-logo-text">Bias Breakers</span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="#predict">Predict</a>
+        <a class="nav-link" href="#compare">Compare</a>
+        <a class="nav-link" href="#demo">Demo</a>
+        <a class="nav-link" href="#upload">Upload</a>
+        <a class="nav-link" href="#about">About</a>
 
-      <button class="nav-btn" onclick="scrollToDemo()">Run Audit →</button>
-    </div>
-  </div>
-</nav>
-
-<!-- ── HERO ─────────────────────────────────────────────────────────────── -->
-<div class="hero">
-  <div class="hero-inner">
-    <div>
-      <div class="hero-label">
-        <div class="hero-label-dot"></div>
-        AI Fairness Auditor
-      </div>
-      <h1>Break the <em>Bias</em><br>in Your AI Models</h1>
-      <p class="hero-sub">
-        Upload any hiring, lending, or classification dataset and discover
-        hidden discrimination — explained in plain English — fixed in one click.
-      </p>
-      <div class="hero-actions">
-        <button class="btn btn-primary" onclick="scrollToDemo()">
-          ▶ &nbsp;Run Free Demo
-        </button>
-        <a class="btn btn-purple" href="#compare">
-          🔬 &nbsp;Bias Exposer
-        </a>
-        <a class="btn btn-outline" href="#upload">
-          Upload Your Dataset
-        </a>
+        <button class="nav-btn" onclick="scrollToDemo()">Run Audit →</button>
       </div>
     </div>
+  </nav>
 
-    <!-- Hero preview card -->
-    <div class="hero-card">
-      <div class="hc-title">IndiaHire-Bias Dataset — Live Snapshot</div>
-      <div class="hc-stats">
-        <div class="hc-stat danger">
-          <div class="hc-stat-val" id="hero-di">—</div>
-          <div class="hc-stat-lbl">Disparate Impact</div>
-        </div>
-        <div class="hc-stat warn">
-          <div class="hc-stat-val" id="hero-gap">—</div>
-          <div class="hc-stat-lbl">Gender Gap</div>
-        </div>
-        <div class="hc-stat info">
-          <div class="hc-stat-val" id="hero-records">5K</div>
-          <div class="hc-stat-lbl">Records Scanned</div>
-        </div>
-        <div class="hc-stat success">
-          <div class="hc-stat-val" id="hero-di-after">—</div>
-          <div class="hc-stat-lbl">After Fix</div>
-        </div>
-      </div>
-      <hr class="hc-divider" />
-      <div class="hc-story">
-        <strong>Priya from Jaipur</strong> scored <strong>94%</strong> on the skills test.
-        The model rejected her — because of her city, her college, and a career gap.
-        Not her ability.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── STATS BAND ─────────────────────────────────────────────────────── -->
-<div class="stats-band">
-  <div class="stats-inner">
-    <div class="stat-item">
-      <div class="stat-num" id="anim-gap">34%</div>
-      <div class="stat-desc">Gender hiring gap in Indian tech — invisible until audited</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">5,000</div>
-      <div class="stat-desc">Research-grounded records with 6 documented bias patterns</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">90s</div>
-      <div class="stat-desc">From CSV upload to full bias audit with plain-English explanation</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">1-click</div>
-      <div class="stat-desc">Reweighing mitigation — bias fixed before deployment</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── STUDENT PREDICTOR ─────────────────────────────────────────────── -->
-<section style="background:var(--white); border-bottom:1px solid var(--border);" id="predict">
-  <div class="container">
-    <div class="section-head">
-      <div class="section-tag">Student Evaluator</div>
-      <h2>Check Your Selection Chances</h2>
-      <p class="section-sub">
-        Enter a student's details. The model predicts selection outcome,
-        explains every rejection reason, and shows what bias is at play.
-      </p>
-    </div>
-
-    <!-- Form -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
-
-      <!-- Left — inputs -->
+  <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+  <div class="hero">
+    <div class="hero-inner">
       <div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-
-          <!-- Name -->
-          <div style="grid-column:1/-1;">
-            <label class="form-label">Student Name <span style="color:var(--text-4);font-weight:400">(for display)</span></label>
-            <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma" />
-          </div>
-
-          <!-- Gender -->
-          <div>
-            <label class="form-label">Gender</label>
-            <select class="form-input" id="f-gender">
-              <option value="0">Female</option>
-              <option value="1" selected>Male</option>
-            </select>
-          </div>
-
-          <!-- Age -->
-          <div>
-            <label class="form-label">Age</label>
-            <input class="form-input" type="number" id="f-age" value="24" min="18" max="50" />
-          </div>
-
-          <!-- State -->
-          <div>
-            <label class="form-label">City / State Tier</label>
-            <select class="form-input" id="f-state">
-              <option value="Metro">Metro (Delhi / Mumbai / Bengaluru)</option>
-              <option value="Tier2" selected>Tier 2 City</option>
-              <option value="Tier3">Tier 3 City / Rural</option>
-            </select>
-          </div>
-
-          <!-- Institution -->
-          <div>
-            <label class="form-label">College Tier</label>
-            <select class="form-input" id="f-institution">
-              <option value="IIT_NIT">IIT / NIT</option>
-              <option value="Tier2_College" selected>Tier 2 College</option>
-              <option value="Tier3_College">Tier 3 / Private College</option>
-            </select>
-          </div>
-
-          <!-- Skills -->
-          <div style="grid-column:1/-1;">
-            <label class="form-label">
-              Skills Score
-              <span class="form-hint" id="skills-display">75 / 100</span>
-            </label>
-            <input class="form-range" type="range" id="f-skills" min="0" max="100" value="75"
-              oninput="document.getElementById('skills-display').textContent=this.value+' / 100'" />
-          </div>
-
-          <!-- Communication -->
-          <div style="grid-column:1/-1;">
-            <label class="form-label">
-              Communication Score
-              <span class="form-hint" id="comm-display">65 / 100</span>
-            </label>
-            <input class="form-range" type="range" id="f-comm" min="0" max="100" value="65"
-              oninput="document.getElementById('comm-display').textContent=this.value+' / 100'" />
-          </div>
-
-          <!-- Experience -->
-          <div>
-            <label class="form-label">Experience (years)</label>
-            <input class="form-input" type="number" id="f-exp" value="2" min="0" max="20" />
-          </div>
-
-          <!-- Gap years -->
-          <div>
-            <label class="form-label">Career Gap (years)</label>
-            <input class="form-input" type="number" id="f-gap" value="0" min="0" max="10" />
-          </div>
-
-          <!-- Referral -->
-          <div style="grid-column:1/-1;">
-            <label class="form-label">Do you have a referral?</label>
-            <select class="form-input" id="f-referral">
-              <option value="0" selected>No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-
+        <div class="hero-label">
+          <div class="hero-label-dot"></div>
+          AI Fairness Auditor
         </div>
-
-        <button class="btn btn-primary" style="margin-top:20px;width:100%;justify-content:center;" id="predict-btn" onclick="runPredict()">
-          Analyse This Student →
-        </button>
-        <div class="alert alert-error" id="predict-error" style="margin-top:12px;"></div>
+        <h1>Break the <em>Bias</em><br>in Your AI Models</h1>
+        <p class="hero-sub">
+          Upload any hiring, lending, or classification dataset and discover
+          hidden discrimination — explained in plain English — fixed in one click.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="scrollToDemo()">
+            ▶ &nbsp;Run Free Demo
+          </button>
+          <a class="btn btn-purple" href="#compare">
+            🔬 &nbsp;Bias Exposer
+          </a>
+          <a class="btn btn-outline" href="#upload">
+            Upload Your Dataset
+          </a>
+        </div>
       </div>
 
-      <!-- Right — result panel -->
-      <div>
-        <!-- Placeholder state -->
-        <div id="predict-placeholder" style="
+      <!-- Hero preview card -->
+      <div class="hero-card">
+        <div class="hc-title">IndiaHire-Bias Dataset — Live Snapshot</div>
+        <div class="hc-stats">
+          <div class="hc-stat danger">
+            <div class="hc-stat-val" id="hero-di">—</div>
+            <div class="hc-stat-lbl">Disparate Impact</div>
+          </div>
+          <div class="hc-stat warn">
+            <div class="hc-stat-val" id="hero-gap">—</div>
+            <div class="hc-stat-lbl">Gender Gap</div>
+          </div>
+          <div class="hc-stat info">
+            <div class="hc-stat-val" id="hero-records">5K</div>
+            <div class="hc-stat-lbl">Records Scanned</div>
+          </div>
+          <div class="hc-stat success">
+            <div class="hc-stat-val" id="hero-di-after">—</div>
+            <div class="hc-stat-lbl">After Fix</div>
+          </div>
+        </div>
+        <hr class="hc-divider" />
+        <div class="hc-story">
+          <strong>Priya from Jaipur</strong> scored <strong>94%</strong> on the skills test.
+          The model rejected her — because of her city, her college, and a career gap.
+          Not her ability.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STATS BAND ─────────────────────────────────────────────────────── -->
+  <div class="stats-band">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-num" id="anim-gap">34%</div>
+        <div class="stat-desc">Gender hiring gap in Indian tech — invisible until audited</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5,000</div>
+        <div class="stat-desc">Research-grounded records with 6 documented bias patterns</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">90s</div>
+        <div class="stat-desc">From CSV upload to full bias audit with plain-English explanation</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1-click</div>
+        <div class="stat-desc">Reweighing mitigation — bias fixed before deployment</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STUDENT PREDICTOR ─────────────────────────────────────────────── -->
+  <section style="background:var(--white); border-bottom:1px solid var(--border);" id="predict">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">Student Evaluator</div>
+        <h2>Check Your Selection Chances</h2>
+        <p class="section-sub">
+          Enter a student's details. The model predicts selection outcome,
+          explains every rejection reason, and shows what bias is at play.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+
+        <!-- Left — inputs -->
+        <div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+            <!-- Name -->
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Student Name <span style="color:var(--text-4);font-weight:400">(for
+                  display)</span></label>
+              <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma" />
+            </div>
+
+            <!-- Gender -->
+            <div>
+              <label class="form-label">Gender</label>
+              <select class="form-input" id="f-gender">
+                <option value="0">Female</option>
+                <option value="1" selected>Male</option>
+              </select>
+            </div>
+
+            <!-- Age -->
+            <div>
+              <label class="form-label">Age</label>
+              <input class="form-input" type="number" id="f-age" value="24" min="18" max="50" />
+            </div>
+
+            <!-- State -->
+            <div>
+              <label class="form-label">City / State Tier</label>
+              <select class="form-input" id="f-state">
+                <option value="Metro">Metro (Delhi / Mumbai / Bengaluru)</option>
+                <option value="Tier2" selected>Tier 2 City</option>
+                <option value="Tier3">Tier 3 City / Rural</option>
+              </select>
+            </div>
+
+            <!-- Institution -->
+            <div>
+              <label class="form-label">College Tier</label>
+              <select class="form-input" id="f-institution">
+                <option value="IIT_NIT">IIT / NIT</option>
+                <option value="Tier2_College" selected>Tier 2 College</option>
+                <option value="Tier3_College">Tier 3 / Private College</option>
+              </select>
+            </div>
+
+            <!-- Skills -->
+            <div style="grid-column:1/-1;">
+              <label class="form-label">
+                Skills Score
+                <span class="form-hint" id="skills-display">75 / 100</span>
+              </label>
+              <input class="form-range" type="range" id="f-skills" min="0" max="100" value="75"
+                oninput="document.getElementById('skills-display').textContent=this.value+' / 100'" />
+            </div>
+
+            <!-- Communication -->
+            <div style="grid-column:1/-1;">
+              <label class="form-label">
+                Communication Score
+                <span class="form-hint" id="comm-display">65 / 100</span>
+              </label>
+              <input class="form-range" type="range" id="f-comm" min="0" max="100" value="65"
+                oninput="document.getElementById('comm-display').textContent=this.value+' / 100'" />
+            </div>
+
+            <!-- Experience -->
+            <div>
+              <label class="form-label">Experience (years)</label>
+              <input class="form-input" type="number" id="f-exp" value="2" min="0" max="20" />
+            </div>
+
+            <!-- Gap years -->
+            <div>
+              <label class="form-label">Career Gap (years)</label>
+              <input class="form-input" type="number" id="f-gap" value="0" min="0" max="10" />
+            </div>
+
+            <!-- Referral -->
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Do you have a referral?</label>
+              <select class="form-input" id="f-referral">
+                <option value="0" selected>No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+
+          </div>
+
+          <button class="btn btn-primary" style="margin-top:20px;width:100%;justify-content:center;" id="predict-btn"
+            onclick="runPredict()">
+            Analyse This Student →
+          </button>
+          <div class="alert alert-error" id="predict-error" style="margin-top:12px;"></div>
+        </div>
+
+        <!-- Right — result panel -->
+        <div>
+          <!-- Placeholder state -->
+          <div id="predict-placeholder" style="
           height:100%; min-height:340px;
           border:2px dashed var(--border-2);
           border-radius:var(--radius);
@@ -938,565 +1575,627 @@
           align-items:center; justify-content:center;
           text-align:center; padding:32px; gap:10px;
           color:var(--text-3);">
-          <div style="font-size:36px;">👤</div>
-          <div style="font-weight:600;">Results appear here</div>
-          <div style="font-size:13px;">Fill in the student details and click Analyse</div>
+            <div style="font-size:36px;">👤</div>
+            <div style="font-weight:600;">Results appear here</div>
+            <div style="font-size:13px;">Fill in the student details and click Analyse</div>
+          </div>
+
+          <!-- Loader -->
+          <div id="predict-loader" style="display:none; text-align:center; padding:48px;">
+            <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px;"></div>
+            <div style="font-size:13px;color:var(--text-3);">Running bias-aware prediction…</div>
+          </div>
+
+          <!-- Result -->
+          <div id="predict-result" style="display:none;"></div>
         </div>
 
-        <!-- Loader -->
-        <div id="predict-loader" style="display:none; text-align:center; padding:48px;">
-          <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px;"></div>
-          <div style="font-size:13px;color:var(--text-3);">Running bias-aware prediction…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SCENARIO COMPARISON (BIAS EXPOSER) ─────────────────────────────── -->
+  <section class="compare-section" id="compare">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag" style="color:var(--purple);">🔬 Bias Exposer</div>
+        <h2>See Bias in Action — Side by Side</h2>
+        <p class="section-sub">
+          Two identical students, only demographics differ. Watch how bias changes the outcome.
+          Click "Expose Bias" to run the comparison.
+        </p>
+      </div>
+
+      <div class="compare-grid">
+        <!-- Profile A -->
+        <div class="compare-profile">
+          <h3><span style="color:var(--blue);">●</span> Profile A</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label">Name</label>
+              <input class="form-input" id="ca-name" value="Priya Sharma" />
+            </div>
+            <div>
+              <label class="form-label">Gender</label>
+              <select class="form-input" id="ca-gender">
+                <option value="0" selected>Female</option>
+                <option value="1">Male</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">City Tier</label>
+              <select class="form-input" id="ca-state">
+                <option value="Metro">Metro</option>
+                <option value="Tier2">Tier 2</option>
+                <option value="Tier3" selected>Tier 3</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">College Tier</label>
+              <select class="form-input" id="ca-institution">
+                <option value="IIT_NIT">IIT/NIT</option>
+                <option value="Tier2_College" selected>Tier 2</option>
+                <option value="Tier3_College">Tier 3</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Skills</label>
+              <input class="form-input" type="number" id="ca-skills" value="88" min="0" max="100" />
+            </div>
+            <div>
+              <label class="form-label">Communication</label>
+              <input class="form-input" type="number" id="ca-comm" value="75" min="0" max="100" />
+            </div>
+            <div>
+              <label class="form-label">Experience</label>
+              <input class="form-input" type="number" id="ca-exp" value="3" min="0" max="20" />
+            </div>
+            <div>
+              <label class="form-label">Gap Years</label>
+              <input class="form-input" type="number" id="ca-gap" value="1" min="0" max="10" />
+            </div>
+            <div>
+              <label class="form-label">Referral</label>
+              <select class="form-input" id="ca-referral">
+                <option value="0" selected>No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Age</label>
+              <input class="form-input" type="number" id="ca-age" value="26" min="18" max="50" />
+            </div>
+          </div>
         </div>
 
-        <!-- Result -->
-        <div id="predict-result" style="display:none;"></div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ── SCENARIO COMPARISON (BIAS EXPOSER) ─────────────────────────────── -->
-<section class="compare-section" id="compare">
-  <div class="container">
-    <div class="section-head">
-      <div class="section-tag" style="color:var(--purple);">🔬 Bias Exposer</div>
-      <h2>See Bias in Action — Side by Side</h2>
-      <p class="section-sub">
-        Two identical students, only demographics differ. Watch how bias changes the outcome.
-        Click "Expose Bias" to run the comparison.
-      </p>
-    </div>
-
-    <div class="compare-grid">
-      <!-- Profile A -->
-      <div class="compare-profile">
-        <h3><span style="color:var(--blue);">●</span> Profile A</h3>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div>
-            <label class="form-label">Name</label>
-            <input class="form-input" id="ca-name" value="Priya Sharma" />
-          </div>
-          <div>
-            <label class="form-label">Gender</label>
-            <select class="form-input" id="ca-gender">
-              <option value="0" selected>Female</option>
-              <option value="1">Male</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">City Tier</label>
-            <select class="form-input" id="ca-state">
-              <option value="Metro">Metro</option>
-              <option value="Tier2">Tier 2</option>
-              <option value="Tier3" selected>Tier 3</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">College Tier</label>
-            <select class="form-input" id="ca-institution">
-              <option value="IIT_NIT">IIT/NIT</option>
-              <option value="Tier2_College" selected>Tier 2</option>
-              <option value="Tier3_College">Tier 3</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Skills</label>
-            <input class="form-input" type="number" id="ca-skills" value="88" min="0" max="100" />
-          </div>
-          <div>
-            <label class="form-label">Communication</label>
-            <input class="form-input" type="number" id="ca-comm" value="75" min="0" max="100" />
-          </div>
-          <div>
-            <label class="form-label">Experience</label>
-            <input class="form-input" type="number" id="ca-exp" value="3" min="0" max="20" />
-          </div>
-          <div>
-            <label class="form-label">Gap Years</label>
-            <input class="form-input" type="number" id="ca-gap" value="1" min="0" max="10" />
-          </div>
-          <div>
-            <label class="form-label">Referral</label>
-            <select class="form-input" id="ca-referral">
-              <option value="0" selected>No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Age</label>
-            <input class="form-input" type="number" id="ca-age" value="26" min="18" max="50" />
-          </div>
+        <!-- VS badge -->
+        <div class="compare-vs">
+          <div class="compare-vs-badge">VS</div>
         </div>
-      </div>
 
-      <!-- VS badge -->
-      <div class="compare-vs">
-        <div class="compare-vs-badge">VS</div>
-      </div>
-
-      <!-- Profile B -->
-      <div class="compare-profile">
-        <h3><span style="color:var(--purple);">●</span> Profile B</h3>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div>
-            <label class="form-label">Name</label>
-            <input class="form-input" id="cb-name" value="Rahul Verma" />
-          </div>
-          <div>
-            <label class="form-label">Gender</label>
-            <select class="form-input" id="cb-gender">
-              <option value="0">Female</option>
-              <option value="1" selected>Male</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">City Tier</label>
-            <select class="form-input" id="cb-state">
-              <option value="Metro" selected>Metro</option>
-              <option value="Tier2">Tier 2</option>
-              <option value="Tier3">Tier 3</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">College Tier</label>
-            <select class="form-input" id="cb-institution">
-              <option value="IIT_NIT">IIT/NIT</option>
-              <option value="Tier2_College" selected>Tier 2</option>
-              <option value="Tier3_College">Tier 3</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Skills</label>
-            <input class="form-input" type="number" id="cb-skills" value="88" min="0" max="100" />
-          </div>
-          <div>
-            <label class="form-label">Communication</label>
-            <input class="form-input" type="number" id="cb-comm" value="75" min="0" max="100" />
-          </div>
-          <div>
-            <label class="form-label">Experience</label>
-            <input class="form-input" type="number" id="cb-exp" value="3" min="0" max="20" />
-          </div>
-          <div>
-            <label class="form-label">Gap Years</label>
-            <input class="form-input" type="number" id="cb-gap" value="0" min="0" max="10" />
-          </div>
-          <div>
-            <label class="form-label">Referral</label>
-            <select class="form-input" id="cb-referral">
-              <option value="0">No</option>
-              <option value="1" selected>Yes</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Age</label>
-            <input class="form-input" type="number" id="cb-age" value="26" min="18" max="50" />
+        <!-- Profile B -->
+        <div class="compare-profile">
+          <h3><span style="color:var(--purple);">●</span> Profile B</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label">Name</label>
+              <input class="form-input" id="cb-name" value="Rahul Verma" />
+            </div>
+            <div>
+              <label class="form-label">Gender</label>
+              <select class="form-input" id="cb-gender">
+                <option value="0">Female</option>
+                <option value="1" selected>Male</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">City Tier</label>
+              <select class="form-input" id="cb-state">
+                <option value="Metro" selected>Metro</option>
+                <option value="Tier2">Tier 2</option>
+                <option value="Tier3">Tier 3</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">College Tier</label>
+              <select class="form-input" id="cb-institution">
+                <option value="IIT_NIT">IIT/NIT</option>
+                <option value="Tier2_College" selected>Tier 2</option>
+                <option value="Tier3_College">Tier 3</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Skills</label>
+              <input class="form-input" type="number" id="cb-skills" value="88" min="0" max="100" />
+            </div>
+            <div>
+              <label class="form-label">Communication</label>
+              <input class="form-input" type="number" id="cb-comm" value="75" min="0" max="100" />
+            </div>
+            <div>
+              <label class="form-label">Experience</label>
+              <input class="form-input" type="number" id="cb-exp" value="3" min="0" max="20" />
+            </div>
+            <div>
+              <label class="form-label">Gap Years</label>
+              <input class="form-input" type="number" id="cb-gap" value="0" min="0" max="10" />
+            </div>
+            <div>
+              <label class="form-label">Referral</label>
+              <select class="form-input" id="cb-referral">
+                <option value="0">No</option>
+                <option value="1" selected>Yes</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Age</label>
+              <input class="form-input" type="number" id="cb-age" value="26" min="18" max="50" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div style="text-align:center; margin-top:24px;">
-      <button class="btn btn-purple" id="compare-btn" onclick="runCompare()" style="padding:14px 40px; font-size:15px;">
-        🔬 &nbsp;Expose Bias Now
-      </button>
-    </div>
-
-    <div class="alert alert-error" id="compare-error" style="margin-top:12px;"></div>
-
-    <div id="compare-loader" style="display:none; text-align:center; padding:48px;">
-      <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px;"></div>
-      <div style="font-size:13px;color:var(--text-3);">Comparing profiles through both models…</div>
-    </div>
-
-    <div id="compare-result" class="hidden"></div>
-  </div>
-</section>
-
-
-<!-- ── DEMO SECTION ───────────────────────────────────────────────────── -->
-<section class="results-section" id="demo">
-  <div class="container">
-    <div class="section-head">
-      <div class="section-tag">Live Demo</div>
-      <h2>IndiaHire-Bias Audit</h2>
-      <p class="section-sub">
-        Real analysis on a 5,000-record Indian tech hiring dataset with six documented bias patterns.
-      </p>
-      <div style="margin-top:20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <button class="btn btn-primary" id="demo-btn" onclick="runDemo()">
-          ▶ &nbsp;Run Audit Now
+      <div style="text-align:center; margin-top:24px;">
+        <button class="btn btn-purple" id="compare-btn" onclick="runCompare()"
+          style="padding:14px 40px; font-size:15px;">
+          🔬 &nbsp;Expose Bias Now
         </button>
-        <span style="font-size:13px; color:var(--text-3)">No login required — uses pre-loaded dataset</span>
-      </div>
-    </div>
-
-    <div class="alert alert-error" id="demo-error"></div>
-
-    <!-- Loader -->
-    <div class="loader-wrap" id="demo-loader">
-      <div class="spinner"></div>
-      <div class="loader-text">Analysing 5,000 records for bias patterns…</div>
-    </div>
-
-    <!-- Results -->
-    <div id="results-area" class="hidden">
-
-      <!-- Metrics row -->
-      <div class="metric-grid" id="metrics-grid"></div>
-
-      <!-- Charts -->
-      <div class="charts-grid">
-        <div class="chart-wrap">
-          <h3>Feature Contribution to Bias</h3>
-          <div class="chart-sub">Which features drive discriminatory outcomes (model coefficient importance)</div>
-          <div class="chart-container"><canvas id="shap-chart"></canvas></div>
-        </div>
-        <div class="chart-wrap">
-          <h3>Hiring Rate by Group</h3>
-          <div class="chart-sub">Selection rate comparison across demographic groups</div>
-          <div class="chart-container"><canvas id="group-chart"></canvas></div>
-        </div>
       </div>
 
-      <!-- Ground truth callout -->
-      <div id="gt-callout"></div>
+      <div class="alert alert-error" id="compare-error" style="margin-top:12px;"></div>
 
-      <!-- Model Details -->
-      <div id="model-details-area"></div>
+      <div id="compare-loader" style="display:none; text-align:center; padding:48px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 12px;"></div>
+        <div style="font-size:13px;color:var(--text-3);">Comparing profiles through both models…</div>
+      </div>
 
-      <!-- Before / After -->
+      <div id="compare-result" class="hidden"></div>
+    </div>
+  </section>
+
+
+  <!-- ── DEMO SECTION ───────────────────────────────────────────────────── -->
+  <section class="results-section" id="demo">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">Live Demo</div>
+        <h2>IndiaHire-Bias Audit</h2>
+        <p class="section-sub">
+          Real analysis on a 5,000-record Indian tech hiring dataset with six documented bias patterns.
+        </p>
+        <div style="margin-top:20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="demo-btn" onclick="runDemo()">
+            ▶ &nbsp;Run Audit Now
+          </button>
+          <span style="font-size:13px; color:var(--text-3)">No login required — uses pre-loaded dataset</span>
+        </div>
+      </div>
+
+      <div class="alert alert-error" id="demo-error"></div>
+
+      <!-- Loader -->
+      <div class="loader-wrap" id="demo-loader">
+        <div class="spinner"></div>
+        <div class="loader-text">Analysing 5,000 records for bias patterns…</div>
+      </div>
+
+      <!-- Results -->
+      <div id="results-area" class="hidden">
+
+        <!-- Metrics row -->
+        <div class="metric-grid" id="metrics-grid"></div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+          <div class="chart-wrap">
+            <h3>Feature Contribution to Bias</h3>
+            <div class="chart-sub">Which features drive discriminatory outcomes (model coefficient importance)</div>
+            <div class="chart-container"><canvas id="shap-chart"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <h3>Hiring Rate by Group</h3>
+            <div class="chart-sub">Selection rate comparison across demographic groups</div>
+            <div class="chart-container"><canvas id="group-chart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Ground truth callout -->
+        <div id="gt-callout"></div>
+
+        <!-- Model Details -->
+        <div id="model-details-area"></div>
+
+        <!-- Before / After -->
+        <div class="divider"></div>
+        <div class="section-tag" style="margin-bottom:10px">One-Click Fix</div>
+        <h2 style="margin-bottom:8px">Reweighing Mitigation Applied</h2>
+        <p class="section-sub" style="margin-bottom:0">
+          Sample weights are adjusted so the model judges candidates on skills — not demographics.
+        </p>
+        <div class="ba-grid" id="ba-grid"></div>
+
+        <!-- Accuracy note -->
+        <div id="accuracy-note"></div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── UPLOAD SECTION ─────────────────────────────────────────────────── -->
+  <section class="upload-section" id="upload">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">Your Dataset</div>
+        <h2>Audit Your Own Model</h2>
+        <p class="section-sub">
+          Upload any CSV with a <code
+            style="font-family:'JetBrains Mono',monospace;background:var(--bg);padding:1px 6px;border-radius:4px;font-size:13px">gender</code>
+          column (0/1) and a
+          <code
+            style="font-family:'JetBrains Mono',monospace;background:var(--bg);padding:1px 6px;border-radius:4px;font-size:13px">hiring_decision</code>
+          column (0/1).
+        </p>
+        <a href="https://drive.google.com/uc?export=download&id=1-ngpmAvNV34BkH87UFTh_5LzGLm-G32N" target="_blank"
+          rel="noopener noreferrer" style="
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          margin-top: 16px;
+          padding: 9px 18px;
+          background: var(--green-light);
+          color: var(--green);
+          border: 1px solid #bbf7d0;
+          border-radius: var(--radius-sm);
+          font-size: 13.5px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: background .15s, border-color .15s;
+        " onmouseover="this.style.background='#dcfce7';this.style.borderColor='#86efac'"
+          onmouseout="this.style.background='var(--green-light)';this.style.borderColor='#bbf7d0'">
+          ⬇ Download Sample Dataset (IndiaHire-Bias v1.0 · CSV)
+        </a>
+        <p style="font-size:12px;color:var(--text-4);margin-top:8px;">
+          Not sure about the format? Download our sample, explore it, then upload your own.
+        </p>
+      </div>
+
+      <div class="alert alert-error" id="upload-error"></div>
+
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+        ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <div class="upload-icon">📂</div>
+        <div class="upload-title">Drop your CSV here or <a>click to browse</a></div>
+        <div class="upload-sub">Accepts .csv files · gender (0=Female, 1=Male) · hiring_decision (0/1)</div>
+        <input type="file" id="file-input" accept=".csv" style="display:none" onchange="handleFileSelect(event)" />
+      </div>
+
+      <div class="loader-wrap" id="upload-loader">
+        <div class="spinner"></div>
+        <div class="loader-text" id="upload-loader-text">Uploading and analysing…</div>
+      </div>
+
+      <div id="upload-results" class="hidden" style="margin-top:32px"></div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ──────────────────────────────────────────────────────────── -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">How It Works</div>
+        <h2>Three Steps to Fairer AI</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon">📊</div>
+          <div class="about-title">1 · Detect</div>
+          <div class="about-desc">
+            We compute four fairness metrics — Disparate Impact, Statistical Parity Difference,
+            Equal Opportunity, and Average Odds — to quantify exactly how biased your model is.
+          </div>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🔍</div>
+          <div class="about-title">2 · Explain</div>
+          <div class="about-desc">
+            Feature attribution pinpoints which columns are driving the bias.
+            Not jargon — a clear breakdown your whole team can understand and act on.
+          </div>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">⚖️</div>
+          <div class="about-title">3 · Fix</div>
+          <div class="about-desc">
+            Reweighing adjusts training sample weights so underrepresented groups carry
+            equal influence. Bias removed before deployment — with minimal accuracy loss.
+          </div>
+        </div>
+      </div>
+
       <div class="divider"></div>
-      <div class="section-tag" style="margin-bottom:10px">One-Click Fix</div>
-      <h2 style="margin-bottom:8px">Reweighing Mitigation Applied</h2>
-      <p class="section-sub" style="margin-bottom:0">
-        Sample weights are adjusted so the model judges candidates on skills — not demographics.
-      </p>
-      <div class="ba-grid" id="ba-grid"></div>
 
-      <!-- Accuracy note -->
-      <div id="accuracy-note"></div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ── UPLOAD SECTION ─────────────────────────────────────────────────── -->
-<section class="upload-section" id="upload">
-  <div class="container">
-    <div class="section-head">
-      <div class="section-tag">Your Dataset</div>
-      <h2>Audit Your Own Model</h2>
-      <p class="section-sub">
-        Upload any CSV with a <code style="font-family:'JetBrains Mono',monospace;background:var(--bg);padding:1px 6px;border-radius:4px;font-size:13px">gender</code> column (0/1) and a
-        <code style="font-family:'JetBrains Mono',monospace;background:var(--bg);padding:1px 6px;border-radius:4px;font-size:13px">hiring_decision</code> column (0/1).
-      </p>
-    </div>
-
-    <div class="alert alert-error" id="upload-error"></div>
-
-    <div
-      class="upload-zone"
-      id="upload-zone"
-      onclick="document.getElementById('file-input').click()"
-      ondragover="handleDragOver(event)"
-      ondragleave="handleDragLeave(event)"
-      ondrop="handleDrop(event)"
-    >
-      <div class="upload-icon">📂</div>
-      <div class="upload-title">Drop your CSV here or <a>click to browse</a></div>
-      <div class="upload-sub">Accepts .csv files · gender (0=Female, 1=Male) · hiring_decision (0/1)</div>
-      <input type="file" id="file-input" accept=".csv" style="display:none" onchange="handleFileSelect(event)" />
-    </div>
-
-    <div class="loader-wrap" id="upload-loader">
-      <div class="spinner"></div>
-      <div class="loader-text" id="upload-loader-text">Uploading and analysing…</div>
-    </div>
-
-    <div id="upload-results" class="hidden" style="margin-top:32px"></div>
-  </div>
-</section>
-
-<!-- ── ABOUT ──────────────────────────────────────────────────────────── -->
-<section class="about-section" id="about">
-  <div class="container">
-    <div class="section-head">
-      <div class="section-tag">How It Works</div>
-      <h2>Three Steps to Fairer AI</h2>
-    </div>
-    <div class="about-grid">
-      <div class="about-card">
-        <div class="about-icon">📊</div>
-        <div class="about-title">1 · Detect</div>
-        <div class="about-desc">
-          We compute four fairness metrics — Disparate Impact, Statistical Parity Difference,
-          Equal Opportunity, and Average Odds — to quantify exactly how biased your model is.
+      <!-- Architecture -->
+      <div class="section-tag" style="margin-bottom:10px">Architecture</div>
+      <h2 style="margin-bottom:20px">End-to-End Pipeline</h2>
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; text-align:center;">
+        <div class="card" style="padding:16px;">
+          <div style="font-size:24px;margin-bottom:8px;">📄</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);">CSV Dataset</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Upload / Demo</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:24px;margin-bottom:8px;">⚙️</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);">FastAPI Backend</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">REST API</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:24px;margin-bottom:8px;">🧠</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);">Bias Engine</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">ML + Fairness</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:24px;margin-bottom:8px;">⚖️</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);">Reweighing Fix</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Mitigation</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="font-size:24px;margin-bottom:8px;">📊</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);">Visual Report</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Charts + Verdicts</div>
         </div>
       </div>
-      <div class="about-card">
-        <div class="about-icon">🔍</div>
-        <div class="about-title">2 · Explain</div>
-        <div class="about-desc">
-          Feature attribution pinpoints which columns are driving the bias.
-          Not jargon — a clear breakdown your whole team can understand and act on.
-        </div>
-      </div>
-      <div class="about-card">
-        <div class="about-icon">⚖️</div>
-        <div class="about-title">3 · Fix</div>
-        <div class="about-desc">
-          Reweighing adjusts training sample weights so underrepresented groups carry
-          equal influence. Bias removed before deployment — with minimal accuracy loss.
-        </div>
+
+      <div class="divider"></div>
+
+      <!-- Dataset info -->
+      <div class="section-tag" style="margin-bottom:10px">Dataset</div>
+      <h2 style="margin-bottom:12px">IndiaHire-Bias v1.0</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Bias Signal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">gender</code></td>
+              <td>Binary</td>
+              <td>0 = Female, 1 = Male</td>
+              <td><span class="badge badge-fail">Primary bias</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">state_of_origin</code></td>
+              <td>Categorical</td>
+              <td>Metro / Tier2 / Tier3</td>
+              <td><span class="badge badge-fail">–28% Tier3</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">institution_tier</code></td>
+              <td>Categorical</td>
+              <td>IIT_NIT / Tier2 / Tier3</td>
+              <td><span class="badge badge-warn">–41% Tier3</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">gap_years</code></td>
+              <td>Integer</td>
+              <td>Career gap years (maternity proxy)</td>
+              <td><span class="badge badge-warn">–31% gap≥2</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">skills_score</code></td>
+              <td>Float</td>
+              <td>Technical assessment (0–100)</td>
+              <td><span class="badge badge-pass">Fair signal</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">experience_years</code></td>
+              <td>Integer</td>
+              <td>Total work experience</td>
+              <td><span class="badge badge-pass">Fair signal</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">hiring_decision</code></td>
+              <td>Binary</td>
+              <td>Target: 1 = Hired, 0 = Rejected</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">actual_performance_score</code>
+              </td>
+              <td>Float</td>
+              <td>Post-hire 6-month performance</td>
+              <td><span class="badge badge-pass">Ground truth</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+  </section>
 
-    <div class="divider"></div>
-
-    <!-- Architecture -->
-    <div class="section-tag" style="margin-bottom:10px">Architecture</div>
-    <h2 style="margin-bottom:20px">End-to-End Pipeline</h2>
-    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; text-align:center;">
-      <div class="card" style="padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">📄</div>
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);">CSV Dataset</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Upload / Demo</div>
+  <!-- ── FOOTER ──────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-title">⚖️ Bias Breakers</div>
+      <div class="footer-sub">AI-Powered Bias Detection & Fairness Auditing Platform</div>
+      <div class="footer-links">
+        <a href="#predict">Predict</a>
+        <a href="#compare">Bias Exposer</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#upload">Upload</a>
+        <a href="#about">How It Works</a>
       </div>
-      <div class="card" style="padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">⚙️</div>
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);">FastAPI Backend</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">REST API</div>
-      </div>
-      <div class="card" style="padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">🧠</div>
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);">Bias Engine</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">ML + Fairness</div>
-      </div>
-      <div class="card" style="padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">⚖️</div>
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);">Reweighing Fix</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Mitigation</div>
-      </div>
-      <div class="card" style="padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">📊</div>
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);">Visual Report</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Charts + Verdicts</div>
+      <div style="margin-top:20px; font-size:13px; color:rgba(255,255,255,.5);">
+        Built for Hackathon — Problem 4: Unbiased AI Decision Making &nbsp;|&nbsp; Built by MISS🤍
       </div>
     </div>
+  </footer>
 
-    <div class="divider"></div>
+  <!-- ── SCRIPTS ─────────────────────────────────────────────────────────── -->
+  <script>
+    // ── Utility ──────────────────────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const show = id => { const el = $(id); if (el) el.style.display = ''; };
+    const hide = id => { const el = $(id); if (el) el.style.display = 'none'; };
 
-    <!-- Dataset info -->
-    <div class="section-tag" style="margin-bottom:10px">Dataset</div>
-    <h2 style="margin-bottom:12px">IndiaHire-Bias v1.0</h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Feature</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Bias Signal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">gender</code></td><td>Binary</td><td>0 = Female, 1 = Male</td><td><span class="badge badge-fail">Primary bias</span></td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">state_of_origin</code></td><td>Categorical</td><td>Metro / Tier2 / Tier3</td><td><span class="badge badge-fail">–28% Tier3</span></td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">institution_tier</code></td><td>Categorical</td><td>IIT_NIT / Tier2 / Tier3</td><td><span class="badge badge-warn">–41% Tier3</span></td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">gap_years</code></td><td>Integer</td><td>Career gap years (maternity proxy)</td><td><span class="badge badge-warn">–31% gap≥2</span></td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">skills_score</code></td><td>Float</td><td>Technical assessment (0–100)</td><td><span class="badge badge-pass">Fair signal</span></td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">experience_years</code></td><td>Integer</td><td>Total work experience</td><td><span class="badge badge-pass">Fair signal</span></td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">hiring_decision</code></td><td>Binary</td><td>Target: 1 = Hired, 0 = Rejected</td><td>—</td></tr>
-          <tr><td><code style="font-family:'JetBrains Mono',monospace;font-size:12px">actual_performance_score</code></td><td>Float</td><td>Post-hire 6-month performance</td><td><span class="badge badge-pass">Ground truth</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
+    let shapChart = null;
+    let groupChart = null;
+    let demoLoaded = false;
 
-<!-- ── FOOTER ──────────────────────────────────────────────────────────── -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-title">⚖️ Bias Breakers</div>
-    <div class="footer-sub">AI-Powered Bias Detection & Fairness Auditing Platform</div>
-    <div class="footer-links">
-      <a href="#predict">Predict</a>
-      <a href="#compare">Bias Exposer</a>
-      <a href="#demo">Live Demo</a>
-      <a href="#upload">Upload</a>
-      <a href="#about">How It Works</a>
-    </div>
-    <div style="margin-top:20px; font-size:13px; color:rgba(255,255,255,.5);">
-      Built for Hackathon — Problem 4: Unbiased AI Decision Making &nbsp;|&nbsp; Built by MISS🤍
-    </div>
-  </div>
-</footer>
+    function scrollToDemo() {
+      document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(runDemo, 400);
+    }
 
-<!-- ── SCRIPTS ─────────────────────────────────────────────────────────── -->
-<script>
-  // ── Utility ──────────────────────────────────────────────────────────────
-  const $  = id => document.getElementById(id);
-  const show = id => { const el=$(id); if(el) el.style.display=''; };
-  const hide = id => { const el=$(id); if(el) el.style.display='none'; };
+    // ── Animated counter ─────────────────────────────────────────────────────
+    function animateValue(el, start, end, duration, suffix = '') {
+      const range = end - start;
+      const startTime = performance.now();
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + range * eased;
+        el.textContent = (Number.isInteger(end) ? Math.round(current) : current.toFixed(3)) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
 
-  let shapChart = null;
-  let groupChart = null;
-  let demoLoaded = false;
+    // ── Severity helpers ──────────────────────────────────────────────────────
+    function diClass(di) {
+      if (di >= 0.8) return 'pass';
+      if (di >= 0.6) return 'warn';
+      return 'fail';
+    }
+    function spdClass(spd) {
+      if (Math.abs(spd) < 0.05) return 'pass';
+      if (Math.abs(spd) < 0.15) return 'warn';
+      return 'fail';
+    }
 
-  function scrollToDemo() {
-    document.getElementById('demo').scrollIntoView({ behavior:'smooth' });
-    setTimeout(runDemo, 400);
-  }
+    // ── Render results ────────────────────────────────────────────────────────
+    function renderResults(data, containerId, loaderElId) {
+      hide(loaderElId);
 
-  // ── Animated counter ─────────────────────────────────────────────────────
-  function animateValue(el, start, end, duration, suffix='') {
-    const range = end - start;
-    const startTime = performance.now();
-    const step = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = start + range * eased;
-      el.textContent = (Number.isInteger(end) ? Math.round(current) : current.toFixed(3)) + suffix;
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
+      const b = data.metrics_before;
+      const a = data.metrics_after;
+      const fi = data.feature_importance;
+      const ds = data.dataset_info;
+      const gt = data.ground_truth;
+      const ac = data.accuracy;
+      const md = data.model_details;
 
-  // ── Severity helpers ──────────────────────────────────────────────────────
-  function diClass(di) {
-    if (di >= 0.8) return 'pass';
-    if (di >= 0.6) return 'warn';
-    return 'fail';
-  }
-  function spdClass(spd) {
-    if (Math.abs(spd) < 0.05) return 'pass';
-    if (Math.abs(spd) < 0.15) return 'warn';
-    return 'fail';
-  }
+      // Animate hero card
+      const heroDi = $('hero-di');
+      const heroGap = $('hero-gap');
+      const heroRec = $('hero-records');
+      const heroDiA = $('hero-di-after');
+      animateValue(heroDi, 0, b.disparate_impact, 1200);
+      animateValue(heroGap, 0, b.gender_gap_pct, 1200, '%');
+      heroRec.textContent = (ds.total_records / 1000).toFixed(1) + 'K';
+      animateValue(heroDiA, 0, a.disparate_impact, 1200);
 
-  // ── Render results ────────────────────────────────────────────────────────
-  function renderResults(data, containerId, loaderElId) {
-    hide(loaderElId);
-
-    const b  = data.metrics_before;
-    const a  = data.metrics_after;
-    const fi = data.feature_importance;
-    const ds = data.dataset_info;
-    const gt = data.ground_truth;
-    const ac = data.accuracy;
-    const md = data.model_details;
-
-    // Animate hero card
-    const heroDi = $('hero-di');
-    const heroGap = $('hero-gap');
-    const heroRec = $('hero-records');
-    const heroDiA = $('hero-di-after');
-    animateValue(heroDi, 0, b.disparate_impact, 1200);
-    animateValue(heroGap, 0, b.gender_gap_pct, 1200, '%');
-    heroRec.textContent = (ds.total_records/1000).toFixed(1)+'K';
-    animateValue(heroDiA, 0, a.disparate_impact, 1200);
-
-    // Metric cards
-    const mg = $(containerId === 'results-area' ? 'metrics-grid' : containerId+'-metrics');
-    if (mg) {
-      mg.innerHTML = `
+      // Metric cards
+      const mg = $(containerId === 'results-area' ? 'metrics-grid' : containerId + '-metrics');
+      if (mg) {
+        mg.innerHTML = `
         <div class="metric-card ${diClass(b.disparate_impact)}">
           <div class="metric-label">Disparate Impact</div>
           <div class="metric-val ${diClass(b.disparate_impact)}">${b.disparate_impact.toFixed(3)}</div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div class="metric-desc">Threshold: ≥ 0.80</div>
-            <span class="badge badge-${b.status==='PASS'?'pass':b.status==='WARNING'?'warn':'fail'}">${b.status}</span>
+            <span class="badge badge-${b.status === 'PASS' ? 'pass' : b.status === 'WARNING' ? 'warn' : 'fail'}">${b.status}</span>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar ${b.severity}" style="width:${Math.min(b.disparate_impact*100,100)}%"></div></div>
+          <div class="progress-bar-wrap"><div class="progress-bar ${b.severity}" style="width:${Math.min(b.disparate_impact * 100, 100)}%"></div></div>
         </div>
         <div class="metric-card ${spdClass(b.statistical_parity_diff)}">
           <div class="metric-label">Statistical Parity Diff</div>
           <div class="metric-val ${spdClass(b.statistical_parity_diff)}">${b.statistical_parity_diff.toFixed(3)}</div>
           <div class="metric-desc">Ideal: close to 0.00</div>
-          <div class="progress-bar-wrap"><div class="progress-bar ${spdClass(b.statistical_parity_diff)}" style="width:${Math.min(Math.abs(b.statistical_parity_diff)*300,100)}%"></div></div>
+          <div class="progress-bar-wrap"><div class="progress-bar ${spdClass(b.statistical_parity_diff)}" style="width:${Math.min(Math.abs(b.statistical_parity_diff) * 300, 100)}%"></div></div>
         </div>
         <div class="metric-card neutral">
           <div class="metric-label">Male Hire Rate</div>
-          <div class="metric-val neutral">${(b.privileged_selection_rate*100).toFixed(1)}%</div>
-          <div class="metric-desc">${Math.round(ds.total_records*(b.privileged_selection_rate))} of male candidates hired</div>
+          <div class="metric-val neutral">${(b.privileged_selection_rate * 100).toFixed(1)}%</div>
+          <div class="metric-desc">${Math.round(ds.total_records * (b.privileged_selection_rate))} of male candidates hired</div>
         </div>
         <div class="metric-card ${spdClass(b.statistical_parity_diff)}">
           <div class="metric-label">Female Hire Rate</div>
-          <div class="metric-val ${spdClass(b.statistical_parity_diff)}">${(b.unprivileged_selection_rate*100).toFixed(1)}%</div>
+          <div class="metric-val ${spdClass(b.statistical_parity_diff)}">${(b.unprivileged_selection_rate * 100).toFixed(1)}%</div>
           <div class="metric-desc">${b.gender_gap_pct}% gap vs male candidates</div>
         </div>
       `;
-    }
+      }
 
-    // SHAP chart
-    const shapCtx = document.getElementById(containerId==='results-area' ? 'shap-chart' : containerId+'-shap');
-    if (shapCtx) {
-      if (shapChart) { shapChart.destroy(); shapChart = null; }
-      const labels = fi.map(f => f.feature.replace(/_/g,' '));
-      const vals   = fi.map(f => f.importance);
-      const colors = vals.map((v,i) => {
-        const bias_cols = ['gender','state_of_origin','institution_tier','gap_years','referral'];
-        const isBias = bias_cols.some(b => fi[i].feature.includes(b.split('_')[0]));
-        return isBias ? 'rgba(220,38,38,0.75)' : 'rgba(22,163,74,0.75)';
-      });
-      shapChart = new Chart(shapCtx, {
-        type: 'bar',
-        data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
-        options: {
-          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw.toFixed(1)}% influence` } } },
-          scales: {
-            x: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#6b7280' } },
-            y: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#374151' } }
+      // SHAP chart
+      const shapCtx = document.getElementById(containerId === 'results-area' ? 'shap-chart' : containerId + '-shap');
+      if (shapCtx) {
+        if (shapChart) { shapChart.destroy(); shapChart = null; }
+        const labels = fi.map(f => f.feature.replace(/_/g, ' '));
+        const vals = fi.map(f => f.importance);
+        const colors = vals.map((v, i) => {
+          const bias_cols = ['gender', 'state_of_origin', 'institution_tier', 'gap_years', 'referral'];
+          const isBias = bias_cols.some(b => fi[i].feature.includes(b.split('_')[0]));
+          return isBias ? 'rgba(220,38,38,0.75)' : 'rgba(22,163,74,0.75)';
+        });
+        shapChart = new Chart(shapCtx, {
+          type: 'bar',
+          data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw.toFixed(1)}% influence` } } },
+            scales: {
+              x: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#6b7280' } },
+              y: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#374151' } }
+            }
           }
-        }
-      });
-    }
+        });
+      }
 
-    // Group chart
-    const gcCtx = document.getElementById(containerId==='results-area' ? 'group-chart' : containerId+'-group');
-    if (gcCtx) {
-      if (groupChart) { groupChart.destroy(); groupChart = null; }
-      groupChart = new Chart(gcCtx, {
-        type: 'bar',
-        data: {
-          labels: ['Male (Privileged)', 'Female (Unprivileged)', 'After Reweighing (F)'],
-          datasets: [{
-            data: [
-              (b.privileged_selection_rate*100).toFixed(1),
-              (b.unprivileged_selection_rate*100).toFixed(1),
-              (a.unprivileged_selection_rate*100).toFixed(1),
-            ],
-            backgroundColor: ['rgba(37,99,235,0.7)', 'rgba(220,38,38,0.7)', 'rgba(22,163,74,0.7)'],
-            borderRadius: 4,
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: c => ` ${c.raw}% hired` } }
+      // Group chart
+      const gcCtx = document.getElementById(containerId === 'results-area' ? 'group-chart' : containerId + '-group');
+      if (gcCtx) {
+        if (groupChart) { groupChart.destroy(); groupChart = null; }
+        groupChart = new Chart(gcCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Male (Privileged)', 'Female (Unprivileged)', 'After Reweighing (F)'],
+            datasets: [{
+              data: [
+                (b.privileged_selection_rate * 100).toFixed(1),
+                (b.unprivileged_selection_rate * 100).toFixed(1),
+                (a.unprivileged_selection_rate * 100).toFixed(1),
+              ],
+              backgroundColor: ['rgba(37,99,235,0.7)', 'rgba(220,38,38,0.7)', 'rgba(22,163,74,0.7)'],
+              borderRadius: 4,
+            }]
           },
-          scales: {
-            y: {
-              beginAtZero: true, max: 100,
-              grid: { color: '#f3f4f6' },
-              ticks: { font:{size:11}, color:'#6b7280', callback: v => v+'%' }
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: c => ` ${c.raw}% hired` } }
             },
-            x: { grid: { display: false }, ticks: { font:{size:11}, color:'#374151' } }
+            scales: {
+              y: {
+                beginAtZero: true, max: 100,
+                grid: { color: '#f3f4f6' },
+                ticks: { font: { size: 11 }, color: '#6b7280', callback: v => v + '%' }
+              },
+              x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#374151' } }
+            }
           }
-        }
-      });
-    }
+        });
+      }
 
-    // Ground truth callout
-    const gtEl = document.getElementById(containerId==='results-area' ? 'gt-callout' : containerId+'-gt');
-    if (gtEl && gt) {
-      gtEl.innerHTML = `
+      // Ground truth callout
+      const gtEl = document.getElementById(containerId === 'results-area' ? 'gt-callout' : containerId + '-gt');
+      if (gtEl && gt) {
+        gtEl.innerHTML = `
         <div class="callout callout-red">
           <div class="callout-icon">🔍</div>
           <div>
@@ -1511,12 +2210,12 @@
           </div>
         </div>
       `;
-    }
+      }
 
-    // Model details (real metrics)
-    const mdEl = document.getElementById(containerId==='results-area' ? 'model-details-area' : containerId+'-model');
-    if (mdEl && md) {
-      mdEl.innerHTML = `
+      // Model details (real metrics)
+      const mdEl = document.getElementById(containerId === 'results-area' ? 'model-details-area' : containerId + '-model');
+      if (mdEl && md) {
+        mdEl.innerHTML = `
         <div class="divider"></div>
         <div class="section-tag" style="margin-bottom:10px">Model Performance</div>
         <h2 style="margin-bottom:8px; font-size:24px;">Real ML Metrics (75/25 Train-Test Split)</h2>
@@ -1526,54 +2225,54 @@
             <div class="card-title" style="color:var(--red);">⚠️ Biased Model</div>
             <div class="model-detail-grid">
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.accuracy*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.accuracy * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">Accuracy</div>
               </div>
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.precision*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.precision * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">Precision</div>
               </div>
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.recall*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.recall * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">Recall</div>
               </div>
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.f1*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--red);">${(md.biased_model.f1 * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">F1 Score</div>
               </div>
             </div>
-            ${md.biased_model.cv_mean ? `<div style="margin-top:8px;font-size:12px;color:var(--text-3);text-align:center;">5-Fold CV: ${(md.biased_model.cv_mean*100).toFixed(1)}% ± ${(md.biased_model.cv_std*100).toFixed(1)}%</div>` : ''}
+            ${md.biased_model.cv_mean ? `<div style="margin-top:8px;font-size:12px;color:var(--text-3);text-align:center;">5-Fold CV: ${(md.biased_model.cv_mean * 100).toFixed(1)}% ± ${(md.biased_model.cv_std * 100).toFixed(1)}%</div>` : ''}
           </div>
           <div class="card">
             <div class="card-title" style="color:var(--green);">✅ Fair Model (Reweighed)</div>
             <div class="model-detail-grid">
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.accuracy*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.accuracy * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">Accuracy</div>
               </div>
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.precision*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.precision * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">Precision</div>
               </div>
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.recall*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.recall * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">Recall</div>
               </div>
               <div class="model-detail-card">
-                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.f1*100).toFixed(1)}%</div>
+                <div class="model-detail-val" style="color:var(--green);">${(md.fair_model.f1 * 100).toFixed(1)}%</div>
                 <div class="model-detail-label">F1 Score</div>
               </div>
             </div>
-            ${md.fair_model.cv_mean ? `<div style="margin-top:8px;font-size:12px;color:var(--text-3);text-align:center;">5-Fold CV: ${(md.fair_model.cv_mean*100).toFixed(1)}% ± ${(md.fair_model.cv_std*100).toFixed(1)}%</div>` : ''}
+            ${md.fair_model.cv_mean ? `<div style="margin-top:8px;font-size:12px;color:var(--text-3);text-align:center;">5-Fold CV: ${(md.fair_model.cv_mean * 100).toFixed(1)}% ± ${(md.fair_model.cv_std * 100).toFixed(1)}%</div>` : ''}
           </div>
         </div>
       `;
-    }
+      }
 
-    // Before / After
-    const baEl = document.getElementById(containerId==='results-area' ? 'ba-grid' : containerId+'-ba');
-    if (baEl) {
-      baEl.innerHTML = `
+      // Before / After
+      const baEl = document.getElementById(containerId === 'results-area' ? 'ba-grid' : containerId + '-ba');
+      if (baEl) {
+        baEl.innerHTML = `
         <div class="ba-panel before">
           <div class="ba-panel-head">
             <span>Before Mitigation</span>
@@ -1582,9 +2281,9 @@
           <div class="ba-panel-body">
             <div class="ba-row"><span class="ba-row-label">Disparate Impact</span><span class="ba-row-val" style="color:var(--red)">${b.disparate_impact.toFixed(3)}</span></div>
             <div class="ba-row"><span class="ba-row-label">Stat. Parity Diff</span><span class="ba-row-val" style="color:var(--red)">${b.statistical_parity_diff.toFixed(3)}</span></div>
-            <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(b.unprivileged_selection_rate*100).toFixed(1)}%</span></div>
+            <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(b.unprivileged_selection_rate * 100).toFixed(1)}%</span></div>
             <div class="ba-row"><span class="ba-row-label">Gender Gap</span><span class="ba-row-val" style="color:var(--red)">${b.gender_gap_pct}%</span></div>
-            <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.before*100).toFixed(1)}%</span></div>
+            <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.before * 100).toFixed(1)}%</span></div>
           </div>
         </div>
         <div class="ba-arrow">
@@ -1599,91 +2298,91 @@
           <div class="ba-panel-body">
             <div class="ba-row"><span class="ba-row-label">Disparate Impact</span><span class="ba-row-val" style="color:var(--green)">${a.disparate_impact.toFixed(3)}</span></div>
             <div class="ba-row"><span class="ba-row-label">Stat. Parity Diff</span><span class="ba-row-val" style="color:var(--green)">${a.statistical_parity_diff.toFixed(3)}</span></div>
-            <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(a.unprivileged_selection_rate*100).toFixed(1)}%</span></div>
+            <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(a.unprivileged_selection_rate * 100).toFixed(1)}%</span></div>
             <div class="ba-row"><span class="ba-row-label">Gender Gap</span><span class="ba-row-val" style="color:var(--green)">${a.gender_gap_pct}%</span></div>
-            <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.after*100).toFixed(1)}%</span></div>
+            <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.after * 100).toFixed(1)}%</span></div>
           </div>
         </div>
       `;
-    }
+      }
 
-    // Accuracy tradeoff note
-    const accEl = document.getElementById(containerId==='results-area' ? 'accuracy-note' : containerId+'-acc');
-    if (accEl) {
-      const accDrop = ((ac.before - ac.after)*100).toFixed(1);
-      accEl.innerHTML = `
+      // Accuracy tradeoff note
+      const accEl = document.getElementById(containerId === 'results-area' ? 'accuracy-note' : containerId + '-acc');
+      if (accEl) {
+        const accDrop = ((ac.before - ac.after) * 100).toFixed(1);
+        accEl.innerHTML = `
         <div class="callout callout-blue" style="margin-top:16px">
           <div class="callout-icon">ℹ️</div>
           <div>
             <div class="callout-title" style="color:var(--blue)">Fairness–Accuracy Tradeoff</div>
             <div class="callout-body">
               Reweighing improved Disparate Impact from <strong>${b.disparate_impact.toFixed(3)}</strong>
-              to <strong>${a.disparate_impact.toFixed(3)}</strong> — a <strong>${((a.disparate_impact-b.disparate_impact)*100).toFixed(0)}%</strong> improvement.
+              to <strong>${a.disparate_impact.toFixed(3)}</strong> — a <strong>${((a.disparate_impact - b.disparate_impact) * 100).toFixed(0)}%</strong> improvement.
               Model accuracy ${ac.before > ac.after ? 'decreased' : 'changed'} by <strong>${Math.abs(accDrop)}%</strong> — a small, acceptable tradeoff for eliminating systemic discrimination.
             </div>
           </div>
         </div>
       `;
-    }
-  }
-
-  // ── Student Predictor ─────────────────────────────────────────────────────
-  async function runPredict() {
-    const btn = $('predict-btn');
-    $('predict-error').style.display = 'none';
-    $('predict-placeholder').style.display = 'none';
-    $('predict-result').style.display     = 'none';
-    $('predict-loader').style.display     = 'block';
-    btn.disabled = true; btn.textContent = 'Analysing…';
-
-    const student = {
-      name:                $('f-name').value.trim() || 'Candidate',
-      gender:              parseInt($('f-gender').value),
-      age:                 parseInt($('f-age').value),
-      state_of_origin:     $('f-state').value,
-      institution_tier:    $('f-institution').value,
-      skills_score:        parseFloat($('f-skills').value),
-      communication_score: parseFloat($('f-comm').value),
-      experience_years:    parseInt($('f-exp').value),
-      gap_years:           parseInt($('f-gap').value),
-      referral:            parseInt($('f-referral').value),
-    };
-
-    try {
-      const res  = await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(student),
-      });
-      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
-      const data = await res.json();
-      $('predict-loader').style.display = 'none';
-      renderPrediction(data, student);
-    } catch (e) {
-      $('predict-loader').style.display = 'none';
-      $('predict-placeholder').style.display = 'flex';
-      $('predict-error').style.display = 'block';
-      $('predict-error').textContent = 'Error: ' + e.message;
+      }
     }
 
-    btn.disabled = false; btn.textContent = 'Analyse This Student →';
-  }
+    // ── Student Predictor ─────────────────────────────────────────────────────
+    async function runPredict() {
+      const btn = $('predict-btn');
+      $('predict-error').style.display = 'none';
+      $('predict-placeholder').style.display = 'none';
+      $('predict-result').style.display = 'none';
+      $('predict-loader').style.display = 'block';
+      btn.disabled = true; btn.textContent = 'Analysing…';
 
-  function renderPrediction(d, student) {
-    const name    = student.name || 'Candidate';
-    const biased  = d.biased_decision === 1;
-    const fair    = d.fair_decision   === 1;
-    const changed = d.bias_changed_outcome;
+      const student = {
+        name: $('f-name').value.trim() || 'Candidate',
+        gender: parseInt($('f-gender').value),
+        age: parseInt($('f-age').value),
+        state_of_origin: $('f-state').value,
+        institution_tier: $('f-institution').value,
+        skills_score: parseFloat($('f-skills').value),
+        communication_score: parseFloat($('f-comm').value),
+        experience_years: parseInt($('f-exp').value),
+        gap_years: parseInt($('f-gap').value),
+        referral: parseInt($('f-referral').value),
+      };
 
-    const verdictBiased = biased
-      ? `<div class="verdict verdict-selected">
+      try {
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(student),
+        });
+        if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
+        const data = await res.json();
+        $('predict-loader').style.display = 'none';
+        renderPrediction(data, student);
+      } catch (e) {
+        $('predict-loader').style.display = 'none';
+        $('predict-placeholder').style.display = 'flex';
+        $('predict-error').style.display = 'block';
+        $('predict-error').textContent = 'Error: ' + e.message;
+      }
+
+      btn.disabled = false; btn.textContent = 'Analyse This Student →';
+    }
+
+    function renderPrediction(d, student) {
+      const name = student.name || 'Candidate';
+      const biased = d.biased_decision === 1;
+      const fair = d.fair_decision === 1;
+      const changed = d.bias_changed_outcome;
+
+      const verdictBiased = biased
+        ? `<div class="verdict verdict-selected">
            <div class="verdict-icon">✅</div>
            <div>
              <div class="verdict-title" style="color:var(--green)">SELECTED — ${d.biased_prob}% confidence</div>
              <div class="verdict-sub">Biased model prediction — ${name} would be hired.</div>
            </div>
          </div>`
-      : `<div class="verdict verdict-rejected">
+        : `<div class="verdict verdict-rejected">
            <div class="verdict-icon">❌</div>
            <div>
              <div class="verdict-title" style="color:var(--red)">REJECTED — ${d.biased_prob}% selection probability</div>
@@ -1691,8 +2390,8 @@
            </div>
          </div>`;
 
-    const verdictFair = changed
-      ? (fair
+      const verdictFair = changed
+        ? (fair
           ? `<div class="verdict verdict-selected">
                <div class="verdict-icon">⚖️</div>
                <div>
@@ -1707,7 +2406,7 @@
                  <div class="verdict-sub">Rejection is not due to bias — it reflects actual merit factors.</div>
                </div>
              </div>`)
-      : `<div class="verdict verdict-neutral">
+        : `<div class="verdict verdict-neutral">
            <div class="verdict-icon">⚖️</div>
            <div>
              <div class="verdict-title" style="color:var(--blue)">Fair model agrees — ${d.fair_prob}% confidence</div>
@@ -1715,36 +2414,36 @@
            </div>
          </div>`;
 
-    let reasonsHtml = '';
-    if (!biased && d.rejection_reasons.length) {
-      const items = d.rejection_reasons.map(r =>
-        `<li class="reason-item"><span class="reason-dot dot-red"></span>${r}</li>`
-      ).join('');
-      reasonsHtml = `
+      let reasonsHtml = '';
+      if (!biased && d.rejection_reasons.length) {
+        const items = d.rejection_reasons.map(r =>
+          `<li class="reason-item"><span class="reason-dot dot-red"></span>${r}</li>`
+        ).join('');
+        reasonsHtml = `
         <div style="margin-bottom:16px">
           <div class="card-title" style="margin-bottom:8px">Why Rejected</div>
           <ul class="reason-list">${items}</ul>
         </div>`;
-    }
+      }
 
-    let biasHtml = '';
-    if (d.bias_factors.length) {
-      const items = d.bias_factors.map(b =>
-        `<li class="reason-item">
+      let biasHtml = '';
+      if (d.bias_factors.length) {
+        const items = d.bias_factors.map(b =>
+          `<li class="reason-item">
           <span class="reason-dot dot-amber"></span>
           <div>
             <div style="font-weight:600;font-size:13px">${b.factor} <span style="color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:11px">${b.impact}% impact</span></div>
             <div style="color:var(--text-3);font-size:12px;margin-top:2px">${b.note}</div>
           </div>
         </li>`
-      ).join('');
-      biasHtml = `
+        ).join('');
+        biasHtml = `
         <div style="margin-bottom:16px">
           <div class="card-title" style="margin-bottom:8px">Where Bias Was Eliminated</div>
           <ul class="reason-list">${items}</ul>
         </div>`;
-    } else {
-      biasHtml = `
+      } else {
+        biasHtml = `
         <div style="margin-bottom:16px">
           <div class="callout callout-green">
             <div class="callout-icon">✅</div>
@@ -1752,13 +2451,13 @@
             <div class="callout-body">The model's decision is driven by merit-based signals.</div></div>
           </div>
         </div>`;
-    }
+      }
 
-    let improveHtml = '';
-    if (d.improvements.length) {
-      const items = d.improvements.map(imp => {
-        const pct = Math.min(Math.round((imp.current_val / imp.target_val) * 100), 100);
-        return `
+      let improveHtml = '';
+      if (d.improvements.length) {
+        const items = d.improvements.map(imp => {
+          const pct = Math.min(Math.round((imp.current_val / imp.target_val) * 100), 100);
+          return `
         <div class="improve-card">
           <div class="improve-title">
             ${imp.label}
@@ -1769,22 +2468,22 @@
             <div class="improve-bar" style="width:${pct}%"></div>
           </div>
         </div>`;
-      }).join('');
-      improveHtml = `
+        }).join('');
+        improveHtml = `
         <div>
           <div class="card-title" style="margin-bottom:8px">What to Improve to Boost Chances</div>
           ${items}
         </div>`;
-    } else {
-      improveHtml = `
+      } else {
+        improveHtml = `
         <div class="callout callout-blue">
           <div class="callout-icon">💡</div>
           <div><div class="callout-title" style="color:var(--blue)">Skills look strong</div>
           <div class="callout-body">Merit-based factors are above average. Focus on removing bias barriers.</div></div>
         </div>`;
-    }
+      }
 
-    $('predict-result').innerHTML = `
+      $('predict-result').innerHTML = `
       <div style="display:flex;flex-direction:column;gap:0">
         ${verdictBiased}
         ${verdictFair}
@@ -1794,73 +2493,73 @@
         ${improveHtml}
       </div>
     `;
-    $('predict-result').style.display = 'block';
-  }
-
-  // ── Scenario Comparison ───────────────────────────────────────────────────
-  async function runCompare() {
-    const btn = $('compare-btn');
-    $('compare-error').style.display = 'none';
-    $('compare-result').classList.add('hidden');
-    $('compare-loader').style.display = 'block';
-    btn.disabled = true; btn.textContent = 'Comparing…';
-
-    const profileA = {
-      name:                $('ca-name').value.trim() || 'Profile A',
-      gender:              parseInt($('ca-gender').value),
-      age:                 parseInt($('ca-age').value),
-      state_of_origin:     $('ca-state').value,
-      institution_tier:    $('ca-institution').value,
-      skills_score:        parseFloat($('ca-skills').value),
-      communication_score: parseFloat($('ca-comm').value),
-      experience_years:    parseInt($('ca-exp').value),
-      gap_years:           parseInt($('ca-gap').value),
-      referral:            parseInt($('ca-referral').value),
-    };
-
-    const profileB = {
-      name:                $('cb-name').value.trim() || 'Profile B',
-      gender:              parseInt($('cb-gender').value),
-      age:                 parseInt($('cb-age').value),
-      state_of_origin:     $('cb-state').value,
-      institution_tier:    $('cb-institution').value,
-      skills_score:        parseFloat($('cb-skills').value),
-      communication_score: parseFloat($('cb-comm').value),
-      experience_years:    parseInt($('cb-exp').value),
-      gap_years:           parseInt($('cb-gap').value),
-      referral:            parseInt($('cb-referral').value),
-    };
-
-    try {
-      const res = await fetch('/api/compare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile_a: profileA, profile_b: profileB }),
-      });
-      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
-      const data = await res.json();
-      $('compare-loader').style.display = 'none';
-      renderComparison(data, profileA, profileB);
-    } catch (e) {
-      $('compare-loader').style.display = 'none';
-      $('compare-error').style.display = 'block';
-      $('compare-error').textContent = 'Error: ' + e.message;
+      $('predict-result').style.display = 'block';
     }
 
-    btn.disabled = false; btn.textContent = '🔬  Expose Bias Now';
-  }
+    // ── Scenario Comparison ───────────────────────────────────────────────────
+    async function runCompare() {
+      const btn = $('compare-btn');
+      $('compare-error').style.display = 'none';
+      $('compare-result').classList.add('hidden');
+      $('compare-loader').style.display = 'block';
+      btn.disabled = true; btn.textContent = 'Comparing…';
 
-  function renderComparison(data, pa, pb) {
-    const a = data.profile_a;
-    const b = data.profile_b;
+      const profileA = {
+        name: $('ca-name').value.trim() || 'Profile A',
+        gender: parseInt($('ca-gender').value),
+        age: parseInt($('ca-age').value),
+        state_of_origin: $('ca-state').value,
+        institution_tier: $('ca-institution').value,
+        skills_score: parseFloat($('ca-skills').value),
+        communication_score: parseFloat($('ca-comm').value),
+        experience_years: parseInt($('ca-exp').value),
+        gap_years: parseInt($('ca-gap').value),
+        referral: parseInt($('ca-referral').value),
+      };
 
-    const decIcon = (dec) => dec === 1 ? '✅' : '❌';
-    const decColor = (dec) => dec === 1 ? 'var(--green)' : 'var(--red)';
-    const decText = (dec) => dec === 1 ? 'SELECTED' : 'REJECTED';
+      const profileB = {
+        name: $('cb-name').value.trim() || 'Profile B',
+        gender: parseInt($('cb-gender').value),
+        age: parseInt($('cb-age').value),
+        state_of_origin: $('cb-state').value,
+        institution_tier: $('cb-institution').value,
+        skills_score: parseFloat($('cb-skills').value),
+        communication_score: parseFloat($('cb-comm').value),
+        experience_years: parseInt($('cb-exp').value),
+        gap_years: parseInt($('cb-gap').value),
+        referral: parseInt($('cb-referral').value),
+      };
 
-    const summaryClass = data.bias_gap > 15 ? 'callout-red' : data.bias_gap > 5 ? 'callout-purple' : 'callout-blue';
+      try {
+        const res = await fetch('/api/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile_a: profileA, profile_b: profileB }),
+        });
+        if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
+        const data = await res.json();
+        $('compare-loader').style.display = 'none';
+        renderComparison(data, profileA, profileB);
+      } catch (e) {
+        $('compare-loader').style.display = 'none';
+        $('compare-error').style.display = 'block';
+        $('compare-error').textContent = 'Error: ' + e.message;
+      }
 
-    $('compare-result').innerHTML = `
+      btn.disabled = false; btn.textContent = '🔬  Expose Bias Now';
+    }
+
+    function renderComparison(data, pa, pb) {
+      const a = data.profile_a;
+      const b = data.profile_b;
+
+      const decIcon = (dec) => dec === 1 ? '✅' : '❌';
+      const decColor = (dec) => dec === 1 ? 'var(--green)' : 'var(--red)';
+      const decText = (dec) => dec === 1 ? 'SELECTED' : 'REJECTED';
+
+      const summaryClass = data.bias_gap > 15 ? 'callout-red' : data.bias_gap > 5 ? 'callout-purple' : 'callout-blue';
+
+      $('compare-result').innerHTML = `
       <div class="compare-result animate-in">
         <div class="card-title" style="margin-bottom:16px;">Comparison Results</div>
 
@@ -1916,81 +2615,81 @@
         </div>
       </div>
     `;
-    $('compare-result').classList.remove('hidden');
-  }
-
-  // ── Demo ──────────────────────────────────────────────────────────────────
-  async function runDemo() {
-    if (demoLoaded) return;
-
-    $('demo-error').style.display = 'none';
-    $('demo-btn').disabled = true;
-    $('demo-btn').textContent = 'Analysing…';
-    $('demo-loader').style.display = 'block';
-    $('results-area').classList.add('hidden');
-
-    try {
-      const res = await fetch('/api/demo');
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Server error');
-      }
-      const data = await res.json();
-      $('results-area').classList.remove('hidden');
-      renderResults(data, 'results-area', 'demo-loader');
-      demoLoaded = true;
-      $('demo-btn').textContent = '✓ Audit Complete';
-    } catch (e) {
-      $('demo-loader').style.display = 'none';
-      $('demo-error').style.display = 'block';
-      $('demo-error').textContent = 'Error: ' + e.message + '. Make sure the server is running and the dataset is generated.';
-      $('demo-btn').disabled = false;
-      $('demo-btn').textContent = '▶  Run Audit Now';
+      $('compare-result').classList.remove('hidden');
     }
-  }
 
-  // ── Upload ────────────────────────────────────────────────────────────────
-  function handleDragOver(e)  { e.preventDefault(); $('upload-zone').classList.add('drag-over'); }
-  function handleDragLeave(e) { $('upload-zone').classList.remove('drag-over'); }
-  function handleDrop(e) {
-    e.preventDefault();
-    $('upload-zone').classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) processFile(file);
-  }
-  function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) processFile(file);
-  }
+    // ── Demo ──────────────────────────────────────────────────────────────────
+    async function runDemo() {
+      if (demoLoaded) return;
 
-  async function processFile(file) {
-    $('upload-error').style.display = 'none';
-    $('upload-results').classList.add('hidden');
-    $('upload-loader').style.display = 'block';
-    $('upload-loader-text').textContent = `Analysing ${file.name}…`;
+      $('demo-error').style.display = 'none';
+      $('demo-btn').disabled = true;
+      $('demo-btn').textContent = 'Analysing…';
+      $('demo-loader').style.display = 'block';
+      $('results-area').classList.add('hidden');
 
-    const form = new FormData();
-    form.append('file', file);
-
-    try {
-      const res = await fetch('/api/analyze', { method: 'POST', body: form });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Analysis failed');
+      try {
+        const res = await fetch('/api/demo');
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Server error');
+        }
+        const data = await res.json();
+        $('results-area').classList.remove('hidden');
+        renderResults(data, 'results-area', 'demo-loader');
+        demoLoaded = true;
+        $('demo-btn').textContent = '✓ Audit Complete';
+      } catch (e) {
+        $('demo-loader').style.display = 'none';
+        $('demo-error').style.display = 'block';
+        $('demo-error').textContent = 'Error: ' + e.message + '. Make sure the server is running and the dataset is generated.';
+        $('demo-btn').disabled = false;
+        $('demo-btn').textContent = '▶  Run Audit Now';
       }
-      const data = await res.json();
-      buildUploadResults(data);
-    } catch (e) {
+    }
+
+    // ── Upload ────────────────────────────────────────────────────────────────
+    function handleDragOver(e) { e.preventDefault(); $('upload-zone').classList.add('drag-over'); }
+    function handleDragLeave(e) { $('upload-zone').classList.remove('drag-over'); }
+    function handleDrop(e) {
+      e.preventDefault();
+      $('upload-zone').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) processFile(file);
+    }
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (file) processFile(file);
+    }
+
+    async function processFile(file) {
+      $('upload-error').style.display = 'none';
+      $('upload-results').classList.add('hidden');
+      $('upload-loader').style.display = 'block';
+      $('upload-loader-text').textContent = `Analysing ${file.name}…`;
+
+      const form = new FormData();
+      form.append('file', file);
+
+      try {
+        const res = await fetch('/api/analyze', { method: 'POST', body: form });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Analysis failed');
+        }
+        const data = await res.json();
+        buildUploadResults(data);
+      } catch (e) {
+        $('upload-loader').style.display = 'none';
+        $('upload-error').style.display = 'block';
+        $('upload-error').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    function buildUploadResults(data) {
       $('upload-loader').style.display = 'none';
-      $('upload-error').style.display = 'block';
-      $('upload-error').textContent = 'Error: ' + e.message;
-    }
-  }
-
-  function buildUploadResults(data) {
-    $('upload-loader').style.display = 'none';
-    const area = $('upload-results');
-    area.innerHTML = `
+      const area = $('upload-results');
+      area.innerHTML = `
       <div id="upload-results-metrics">
         <div class="metric-grid" id="upload-results-metrics-grid"></div>
       </div>
@@ -2011,24 +2710,24 @@
       <div class="ba-grid" id="upload-results-ba" style="margin-top:24px"></div>
       <div id="upload-results-acc"></div>
     `;
-    area.classList.remove('hidden');
+      area.classList.remove('hidden');
 
-    const b  = data.metrics_before;
-    const a  = data.metrics_after;
-    const fi = data.feature_importance;
-    const ds = data.dataset_info;
-    const gt = data.ground_truth;
-    const ac = data.accuracy;
-    const md = data.model_details;
+      const b = data.metrics_before;
+      const a = data.metrics_after;
+      const fi = data.feature_importance;
+      const ds = data.dataset_info;
+      const gt = data.ground_truth;
+      const ac = data.accuracy;
+      const md = data.model_details;
 
-    const mg = $('upload-results-metrics-grid');
-    mg.innerHTML = `
+      const mg = $('upload-results-metrics-grid');
+      mg.innerHTML = `
       <div class="metric-card ${diClass(b.disparate_impact)}">
         <div class="metric-label">Disparate Impact</div>
         <div class="metric-val ${diClass(b.disparate_impact)}">${b.disparate_impact.toFixed(3)}</div>
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div class="metric-desc">Threshold: ≥ 0.80</div>
-          <span class="badge badge-${b.status==='PASS'?'pass':b.status==='WARNING'?'warn':'fail'}">${b.status}</span>
+          <span class="badge badge-${b.status === 'PASS' ? 'pass' : b.status === 'WARNING' ? 'warn' : 'fail'}">${b.status}</span>
         </div>
       </div>
       <div class="metric-card ${spdClass(b.statistical_parity_diff)}">
@@ -2038,62 +2737,62 @@
       </div>
       <div class="metric-card neutral">
         <div class="metric-label">Male Hire Rate</div>
-        <div class="metric-val neutral">${(b.privileged_selection_rate*100).toFixed(1)}%</div>
+        <div class="metric-val neutral">${(b.privileged_selection_rate * 100).toFixed(1)}%</div>
         <div class="metric-desc">${ds.total_records.toLocaleString()} records scanned</div>
       </div>
       <div class="metric-card ${spdClass(b.statistical_parity_diff)}">
         <div class="metric-label">Female Hire Rate</div>
-        <div class="metric-val ${spdClass(b.statistical_parity_diff)}">${(b.unprivileged_selection_rate*100).toFixed(1)}%</div>
+        <div class="metric-val ${spdClass(b.statistical_parity_diff)}">${(b.unprivileged_selection_rate * 100).toFixed(1)}%</div>
         <div class="metric-desc">${b.gender_gap_pct}% gap</div>
       </div>
     `;
 
-    const sc = $('upload-results-shap');
-    const labels = fi.map(f => f.feature.replace(/_/g,' '));
-    const vals   = fi.map(f => f.importance);
-    const colors = vals.map((v,i) => {
-      const bias_cols = ['gender','state','institution','gap','referral','communication'];
-      const isBias = bias_cols.some(b => fi[i].feature.toLowerCase().includes(b));
-      return isBias ? 'rgba(220,38,38,0.7)' : 'rgba(22,163,74,0.7)';
-    });
-    new Chart(sc, {
-      type: 'bar',
-      data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
-      options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid:{color:'#f3f4f6'}, ticks:{font:{size:11},color:'#6b7280'} },
-          y: { grid:{display:false}, ticks:{font:{size:12},color:'#374151'} }
+      const sc = $('upload-results-shap');
+      const labels = fi.map(f => f.feature.replace(/_/g, ' '));
+      const vals = fi.map(f => f.importance);
+      const colors = vals.map((v, i) => {
+        const bias_cols = ['gender', 'state', 'institution', 'gap', 'referral', 'communication'];
+        const isBias = bias_cols.some(b => fi[i].feature.toLowerCase().includes(b));
+        return isBias ? 'rgba(220,38,38,0.7)' : 'rgba(22,163,74,0.7)';
+      });
+      new Chart(sc, {
+        type: 'bar',
+        data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#6b7280' } },
+            y: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#374151' } }
+          }
         }
-      }
-    });
+      });
 
-    const gc = $('upload-results-group');
-    new Chart(gc, {
-      type: 'bar',
-      data: {
-        labels: ['Male', 'Female (Before)', 'Female (After Fix)'],
-        datasets: [{
-          data: [(b.privileged_selection_rate*100).toFixed(1), (b.unprivileged_selection_rate*100).toFixed(1), (a.unprivileged_selection_rate*100).toFixed(1)],
-          backgroundColor: ['rgba(37,99,235,0.7)','rgba(220,38,38,0.7)','rgba(22,163,74,0.7)'],
-          borderRadius: 4,
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.raw}%`}} },
-        scales: {
-          y: { beginAtZero:true, max:100, grid:{color:'#f3f4f6'}, ticks:{font:{size:11},color:'#6b7280',callback:v=>v+'%'} },
-          x: { grid:{display:false}, ticks:{font:{size:11},color:'#374151'} }
+      const gc = $('upload-results-group');
+      new Chart(gc, {
+        type: 'bar',
+        data: {
+          labels: ['Male', 'Female (Before)', 'Female (After Fix)'],
+          datasets: [{
+            data: [(b.privileged_selection_rate * 100).toFixed(1), (b.unprivileged_selection_rate * 100).toFixed(1), (a.unprivileged_selection_rate * 100).toFixed(1)],
+            backgroundColor: ['rgba(37,99,235,0.7)', 'rgba(220,38,38,0.7)', 'rgba(22,163,74,0.7)'],
+            borderRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw}%` } } },
+          scales: {
+            y: { beginAtZero: true, max: 100, grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#6b7280', callback: v => v + '%' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#374151' } }
+          }
         }
-      }
-    });
+      });
 
-    // Ground truth
-    const gtEl = $('upload-results-gt');
-    if (gtEl && gt) {
-      gtEl.innerHTML = `
+      // Ground truth
+      const gtEl = $('upload-results-gt');
+      if (gtEl && gt) {
+        gtEl.innerHTML = `
         <div class="callout callout-red" style="margin-top:20px;">
           <div class="callout-icon">🔍</div>
           <div>
@@ -2105,42 +2804,42 @@
             </div>
           </div>
         </div>`;
-    }
+      }
 
-    // Model details
-    const mdEl = $('upload-results-model');
-    if (mdEl && md) {
-      mdEl.innerHTML = `
+      // Model details
+      const mdEl = $('upload-results-model');
+      if (mdEl && md) {
+        mdEl.innerHTML = `
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;">
           <div class="card">
             <div class="card-title" style="color:var(--red);">Biased Model</div>
             <div class="model-detail-grid">
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.accuracy*100).toFixed(1)}%</div><div class="model-detail-label">Accuracy</div></div>
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.precision*100).toFixed(1)}%</div><div class="model-detail-label">Precision</div></div>
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.recall*100).toFixed(1)}%</div><div class="model-detail-label">Recall</div></div>
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.f1*100).toFixed(1)}%</div><div class="model-detail-label">F1</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.accuracy * 100).toFixed(1)}%</div><div class="model-detail-label">Accuracy</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.precision * 100).toFixed(1)}%</div><div class="model-detail-label">Precision</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.recall * 100).toFixed(1)}%</div><div class="model-detail-label">Recall</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--red);">${(md.biased_model.f1 * 100).toFixed(1)}%</div><div class="model-detail-label">F1</div></div>
             </div>
           </div>
           <div class="card">
             <div class="card-title" style="color:var(--green);">Fair Model</div>
             <div class="model-detail-grid">
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.accuracy*100).toFixed(1)}%</div><div class="model-detail-label">Accuracy</div></div>
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.precision*100).toFixed(1)}%</div><div class="model-detail-label">Precision</div></div>
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.recall*100).toFixed(1)}%</div><div class="model-detail-label">Recall</div></div>
-              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.f1*100).toFixed(1)}%</div><div class="model-detail-label">F1</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.accuracy * 100).toFixed(1)}%</div><div class="model-detail-label">Accuracy</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.precision * 100).toFixed(1)}%</div><div class="model-detail-label">Precision</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.recall * 100).toFixed(1)}%</div><div class="model-detail-label">Recall</div></div>
+              <div class="model-detail-card"><div class="model-detail-val" style="color:var(--green);">${(md.fair_model.f1 * 100).toFixed(1)}%</div><div class="model-detail-label">F1</div></div>
             </div>
           </div>
         </div>`;
-    }
+      }
 
-    $('upload-results-ba').innerHTML = `
+      $('upload-results-ba').innerHTML = `
       <div class="ba-panel before">
         <div class="ba-panel-head"><span>Before Mitigation</span><span class="badge badge-fail">BIASED</span></div>
         <div class="ba-panel-body">
           <div class="ba-row"><span class="ba-row-label">Disparate Impact</span><span class="ba-row-val" style="color:var(--red)">${b.disparate_impact.toFixed(3)}</span></div>
           <div class="ba-row"><span class="ba-row-label">Stat. Parity Diff</span><span class="ba-row-val" style="color:var(--red)">${b.statistical_parity_diff.toFixed(3)}</span></div>
-          <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(b.unprivileged_selection_rate*100).toFixed(1)}%</span></div>
-          <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.before*100).toFixed(1)}%</span></div>
+          <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(b.unprivileged_selection_rate * 100).toFixed(1)}%</span></div>
+          <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.before * 100).toFixed(1)}%</span></div>
         </div>
       </div>
       <div class="ba-arrow"><span>→</span><span>REWEIGHING</span></div>
@@ -2149,14 +2848,14 @@
         <div class="ba-panel-body">
           <div class="ba-row"><span class="ba-row-label">Disparate Impact</span><span class="ba-row-val" style="color:var(--green)">${a.disparate_impact.toFixed(3)}</span></div>
           <div class="ba-row"><span class="ba-row-label">Stat. Parity Diff</span><span class="ba-row-val" style="color:var(--green)">${a.statistical_parity_diff.toFixed(3)}</span></div>
-          <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(a.unprivileged_selection_rate*100).toFixed(1)}%</span></div>
-          <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.after*100).toFixed(1)}%</span></div>
+          <div class="ba-row"><span class="ba-row-label">Female Hire Rate</span><span class="ba-row-val">${(a.unprivileged_selection_rate * 100).toFixed(1)}%</span></div>
+          <div class="ba-row"><span class="ba-row-label">Model Accuracy</span><span class="ba-row-val">${(ac.after * 100).toFixed(1)}%</span></div>
         </div>
       </div>
     `;
 
-    const accDrop = ((ac.before - ac.after)*100).toFixed(1);
-    $('upload-results-acc').innerHTML = `
+      const accDrop = ((ac.before - ac.after) * 100).toFixed(1);
+      $('upload-results-acc').innerHTML = `
       <div class="callout callout-blue" style="margin-top:16px">
         <div class="callout-icon">ℹ️</div>
         <div>
@@ -2168,335 +2867,372 @@
         </div>
       </div>
     `;
-  }
+    }
 
-  // ── DOCX Documentation Download ──────────────────────────────────────────
-  async function downloadDocx() {
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
-            WidthType, AlignmentType, BorderStyle, ShadingType, TableLayoutType } = docx;
+    // ── DOCX Documentation Download ──────────────────────────────────────────
+    async function downloadDocx() {
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
+        WidthType, AlignmentType, BorderStyle, ShadingType, TableLayoutType } = docx;
 
-    const BLUE = '2563EB';
-    const RED = 'DC2626';
-    const GREEN = '16A34A';
-    const DARK = '111827';
-    const GRAY = '6B7280';
+      const BLUE = '2563EB';
+      const RED = 'DC2626';
+      const GREEN = '16A34A';
+      const DARK = '111827';
+      const GRAY = '6B7280';
 
-    const hr = () => new Paragraph({
-      spacing: { before: 200, after: 200 },
-      border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' } },
-    });
+      const hr = () => new Paragraph({
+        spacing: { before: 200, after: 200 },
+        border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' } },
+      });
 
-    const heading = (text, level) => new Paragraph({
-      heading: level,
-      spacing: { before: 300, after: 120 },
-      children: [new TextRun({ text, bold: true, font: 'Cambria', color: DARK,
-        size: level === HeadingLevel.HEADING_1 ? 36 : level === HeadingLevel.HEADING_2 ? 28 : 24 })],
-    });
+      const heading = (text, level) => new Paragraph({
+        heading: level,
+        spacing: { before: 300, after: 120 },
+        children: [new TextRun({
+          text, bold: true, font: 'Cambria', color: DARK,
+          size: level === HeadingLevel.HEADING_1 ? 36 : level === HeadingLevel.HEADING_2 ? 28 : 24
+        })],
+      });
 
-    const para = (text, opts = {}) => new Paragraph({
-      spacing: { after: 120, ...(opts.spacing || {}) },
-      alignment: opts.align || AlignmentType.LEFT,
-      children: [new TextRun({ text, font: 'Calibri', size: 22, color: opts.color || DARK, ...(opts.run || {}) })],
-    });
+      const para = (text, opts = {}) => new Paragraph({
+        spacing: { after: 120, ...(opts.spacing || {}) },
+        alignment: opts.align || AlignmentType.LEFT,
+        children: [new TextRun({ text, font: 'Calibri', size: 22, color: opts.color || DARK, ...(opts.run || {}) })],
+      });
 
-    const bullet = (text, opts = {}) => new Paragraph({
-      bullet: { level: opts.level || 0 },
-      spacing: { after: 60 },
-      children: [new TextRun({ text, font: 'Calibri', size: 22, color: DARK })],
-    });
+      const bullet = (text, opts = {}) => new Paragraph({
+        bullet: { level: opts.level || 0 },
+        spacing: { after: 60 },
+        children: [new TextRun({ text, font: 'Calibri', size: 22, color: DARK })],
+      });
 
-    const boldPara = (label, value) => new Paragraph({
-      spacing: { after: 80 },
-      children: [
-        new TextRun({ text: label, font: 'Calibri', size: 22, bold: true, color: DARK }),
-        new TextRun({ text: value, font: 'Calibri', size: 22, color: GRAY }),
-      ],
-    });
-
-    const tableCell = (text, opts = {}) => new TableCell({
-      width: { size: opts.width || 2400, type: WidthType.DXA },
-      shading: opts.shading ? { fill: opts.shading, type: ShadingType.CLEAR } : undefined,
-      children: [new Paragraph({
-        spacing: { before: 40, after: 40 },
-        children: [new TextRun({ text, font: 'Calibri', size: 20, bold: !!opts.bold, color: opts.color || DARK })],
-      })],
-    });
-
-    const doc = new Document({
-      creator: 'Bias Breakers Platform',
-      title: 'Bias Breakers — AI Fairness Auditing Documentation',
-      description: 'Complete documentation for the Bias Breakers AI bias detection and mitigation platform.',
-      sections: [{
-        properties: {
-          page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } },
-        },
+      const boldPara = (label, value) => new Paragraph({
+        spacing: { after: 80 },
         children: [
-          // Title
-          new Paragraph({
-            spacing: { after: 80 },
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: '\u2696\uFE0F Bias Breakers v2.0', font: 'Cambria', size: 48, bold: true, color: BLUE })],
-          }),
-          new Paragraph({
-            spacing: { after: 200 },
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: 'AI-Powered Bias Detection, Explanation & Mitigation Platform', font: 'Calibri', size: 24, color: GRAY, italics: true })],
-          }),
-          para('Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models \u2014 before they affect real people. It uses real ML pipelines with genuine train/test evaluation to prove bias exists and then removes it using Reweighing mitigation.'),
-          hr(),
-
-          // Quick Start
-          heading('Quick Start', HeadingLevel.HEADING_1),
-          para('Follow these steps to set up and run the project:'),
-          bullet('python -m venv venv'),
-          bullet('venv\\Scripts\\activate   (Windows)  or  source venv/bin/activate  (Linux/Mac)'),
-          bullet('pip install -r requirements.txt'),
-          bullet('python generate_dataset.py'),
-          bullet('python -m uvicorn main:app --reload'),
-          bullet('Open http://127.0.0.1:8000 in your browser'),
-          hr(),
-
-          // What It Does
-          heading('What It Does', HeadingLevel.HEADING_1),
-          new Table({
-            width: { size: 9000, type: WidthType.DXA },
-            rows: [
-              new TableRow({ children: [
-                tableCell('Step', { bold: true, shading: 'EFF6FF', width: 2000 }),
-                tableCell('Action', { bold: true, shading: 'EFF6FF', width: 7000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('Detect', { width: 2000 }),
-                tableCell('Computes fairness metrics (Disparate Impact, Statistical Parity Difference) on real train/test splits', { width: 7000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('Explain', { width: 2000 }),
-                tableCell('Feature attribution pinpoints the exact cause of bias with contribution percentages', { width: 7000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('Fix', { width: 2000 }),
-                tableCell('Reweighing mitigation adjusts sample weights \u2014 one click, bias removed before deployment', { width: 7000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('Compare', { width: 2000 }),
-                tableCell('Side-by-side Bias Exposer shows how two identical profiles get different outcomes due to bias', { width: 7000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('Predict', { width: 2000 }),
-                tableCell('Individual student predictor with rejection reasons, bias factors, and improvement tips', { width: 7000 }),
-              ]}),
-            ],
-          }),
-          hr(),
-
-          // Dataset
-          heading('Dataset \u2014 IndiaHire-Bias v1.0', HeadingLevel.HEADING_1),
-          para('5,000-record synthetic Indian tech hiring dataset with 6 documented bias patterns:'),
-          bullet('Gender bias \u2014 Women 34% less likely hired despite equal skills'),
-          bullet('Geographic bias \u2014 Tier-3 city candidates penalised 28%'),
-          bullet('Institution bias \u2014 Non-IIT/NIT candidates penalised 41%'),
-          bullet('Career gap penalty \u2014 Disproportionately affects women (maternity/care leave)'),
-          bullet('Referral advantage \u2014 Men receive 2x more referrals'),
-          bullet('Age bias \u2014 Candidates 38+ face 22% lower selection rate'),
-          new Paragraph({ spacing: { before: 120, after: 80 }, children: [] }),
-          boldPara('Ground truth: ', 'The actual_performance_score column proves the bias was irrational \u2014 rejected candidates performed just as well.'),
-          hr(),
-
-          // Dataset Schema
-          heading('Dataset Schema', HeadingLevel.HEADING_2),
-          new Table({
-            width: { size: 9000, type: WidthType.DXA },
-            rows: [
-              new TableRow({ children: [
-                tableCell('Feature', { bold: true, shading: 'EFF6FF', width: 2600 }),
-                tableCell('Type', { bold: true, shading: 'EFF6FF', width: 1400 }),
-                tableCell('Description', { bold: true, shading: 'EFF6FF', width: 3000 }),
-                tableCell('Bias Signal', { bold: true, shading: 'EFF6FF', width: 2000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('gender', { width: 2600 }),
-                tableCell('Binary', { width: 1400 }),
-                tableCell('0 = Female, 1 = Male', { width: 3000 }),
-                tableCell('Primary bias', { width: 2000, color: RED }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('state_of_origin', { width: 2600 }),
-                tableCell('Categorical', { width: 1400 }),
-                tableCell('Metro / Tier2 / Tier3', { width: 3000 }),
-                tableCell('-28% Tier3', { width: 2000, color: RED }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('institution_tier', { width: 2600 }),
-                tableCell('Categorical', { width: 1400 }),
-                tableCell('IIT_NIT / Tier2 / Tier3', { width: 3000 }),
-                tableCell('-41% Tier3', { width: 2000, color: RED }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('gap_years', { width: 2600 }),
-                tableCell('Integer', { width: 1400 }),
-                tableCell('Career gap years (maternity proxy)', { width: 3000 }),
-                tableCell('-31% gap>=2', { width: 2000, color: RED }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('skills_score', { width: 2600 }),
-                tableCell('Float', { width: 1400 }),
-                tableCell('Technical assessment (0-100)', { width: 3000 }),
-                tableCell('Fair signal', { width: 2000, color: GREEN }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('communication_score', { width: 2600 }),
-                tableCell('Float', { width: 1400 }),
-                tableCell('Verbal/written assessment', { width: 3000 }),
-                tableCell('Fair signal', { width: 2000, color: GREEN }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('experience_years', { width: 2600 }),
-                tableCell('Integer', { width: 1400 }),
-                tableCell('Total work experience', { width: 3000 }),
-                tableCell('Fair signal', { width: 2000, color: GREEN }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('hiring_decision', { width: 2600 }),
-                tableCell('Binary', { width: 1400 }),
-                tableCell('Target: 1 = Hired, 0 = Rejected', { width: 3000 }),
-                tableCell('\u2014', { width: 2000 }),
-              ]}),
-              new TableRow({ children: [
-                tableCell('actual_performance_score', { width: 2600 }),
-                tableCell('Float', { width: 1400 }),
-                tableCell('Post-hire 6-month performance', { width: 3000 }),
-                tableCell('Ground truth', { width: 2000, color: BLUE }),
-              ]}),
-            ],
-          }),
-          hr(),
-
-          // Tech Stack
-          heading('Tech Stack', HeadingLevel.HEADING_1),
-          bullet('Backend \u2014 Python 3.12, FastAPI, Pydantic'),
-          bullet('ML Engine \u2014 scikit-learn (Logistic Regression, Reweighing, Cross-Validation)'),
-          bullet('Data \u2014 pandas, numpy'),
-          bullet('Frontend \u2014 HTML5, CSS3, Vanilla JavaScript, Chart.js'),
-          bullet('Architecture \u2014 REST API, Single-Page Application'),
-          hr(),
-
-          // Project Structure
-          heading('Project Structure', HeadingLevel.HEADING_1),
-          para('bias-breakers/', { run: { bold: true, font: 'Consolas' } }),
-          bullet('main.py \u2014 FastAPI application (7 API endpoints)'),
-          bullet('bias_engine.py \u2014 ML bias detection & mitigation engine'),
-          bullet('generate_dataset.py \u2014 Synthetic dataset generator'),
-          bullet('requirements.txt \u2014 Python dependencies'),
-          bullet('commands.txt \u2014 Setup & run guide'),
-          bullet('README.md \u2014 Project readme'),
-          bullet('static/index.html \u2014 Frontend web application'),
-          bullet('datasets/indiahire_bias.csv \u2014 Generated dataset'),
-          hr(),
-
-          // API Endpoints
-          heading('API Endpoints', HeadingLevel.HEADING_1),
-          new Table({
-            width: { size: 9000, type: WidthType.DXA },
-            rows: [
-              new TableRow({ children: [
-                tableCell('Endpoint', { bold: true, shading: 'EFF6FF', width: 2500 }),
-                tableCell('Method', { bold: true, shading: 'EFF6FF', width: 1200 }),
-                tableCell('Description', { bold: true, shading: 'EFF6FF', width: 5300 }),
-              ]}),
-              new TableRow({ children: [tableCell('/', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Web application', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/health', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Health check with version info', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/demo', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Run full audit on IndiaHire dataset', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/predict', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Predict outcome for a single student', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/compare', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Compare two profiles side-by-side', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/batch', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Batch prediction for multiple students', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/analyze', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Upload and audit your own CSV dataset', { width: 5300 })]}),
-              new TableRow({ children: [tableCell('/api/dataset/stats', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Quick summary stats of loaded dataset', { width: 5300 })]}),
-            ],
-          }),
-          hr(),
-
-          // Key Features
-          heading('Key Features', HeadingLevel.HEADING_1),
-
-          heading('1. Bias Exposer (Scenario Comparison)', HeadingLevel.HEADING_2),
-          para('Compare two profiles \u2014 same skills, different demographics. Watch how bias changes the outcome in real time.'),
-
-          heading('2. Real ML Metrics', HeadingLevel.HEADING_2),
-          para('Genuine train/test split (75/25) with actual Accuracy, Precision, Recall, F1 Score, and 5-Fold Cross-Validation.'),
-
-          heading('3. Student Predictor', HeadingLevel.HEADING_2),
-          para('Enter any student\'s details \u2192 get biased vs fair predictions, rejection reasons explained in plain English, bias factors highlighted, and actionable improvement tips.'),
-
-          heading('4. One-Click Mitigation', HeadingLevel.HEADING_2),
-          para('Reweighing algorithm adjusts training sample weights so underrepresented groups carry equal influence. Bias removed with minimal accuracy tradeoff.'),
-
-          heading('5. Ground Truth Validation', HeadingLevel.HEADING_2),
-          para('The actual_performance_score column proves the bias was irrational \u2014 rejected women would have performed equally or better than those hired.'),
-          hr(),
-
-          // ML Pipeline
-          heading('ML Pipeline', HeadingLevel.HEADING_1),
-          para('CSV Dataset \u2192 Encode & Scale \u2192 Train/Test Split (75/25)'),
-          bullet('Biased Model: Logistic Regression trained on raw data'),
-          bullet('Fair Model: Logistic Regression trained with Reweighing sample weights'),
-          bullet('Fairness Metrics computed on both \u2192 Compare Before vs After'),
-          bullet('Visual Report with Charts, Verdicts, and Before/After panels'),
-          hr(),
-
-          // Fairness Metrics
-          heading('Fairness Metrics Explained', HeadingLevel.HEADING_1),
-
-          heading('Disparate Impact (DI)', HeadingLevel.HEADING_2),
-          para('DI = P(Hire | Female) / P(Hire | Male). Threshold: >= 0.80 (80% rule). Values below 0.80 indicate significant bias against the unprivileged group.'),
-
-          heading('Statistical Parity Difference (SPD)', HeadingLevel.HEADING_2),
-          para('SPD = P(Hire | Female) - P(Hire | Male). Ideal: 0.00. Negative values mean females are hired at a lower rate.'),
-
-          heading('Equal Opportunity Difference', HeadingLevel.HEADING_2),
-          para('Difference in True Positive Rates between groups. Measures whether qualified candidates from both groups have equal chances of being correctly identified.'),
-
-          heading('Average Odds Difference', HeadingLevel.HEADING_2),
-          para('Average of TPR difference and FPR difference between groups. A comprehensive fairness measure that considers both types of errors.'),
-          hr(),
-
-          // Reweighing Mitigation
-          heading('Reweighing Mitigation', HeadingLevel.HEADING_1),
-          para('Reweighing is a pre-processing fairness mitigation technique that adjusts the weights of training samples to ensure fair representation:'),
-          bullet('Step 1: Compute expected probability of each (group, label) combination assuming independence'),
-          bullet('Step 2: Compute observed probability of each (group, label) combination in the training data'),
-          bullet('Step 3: Weight = Expected / Observed for each sample'),
-          bullet('Step 4: Retrain the model using these sample weights'),
-          para('This ensures underrepresented group-label combinations get higher weights, compensating for historical bias.'),
-          hr(),
-
-          // Impact
-          heading('Real-World Impact', HeadingLevel.HEADING_1),
-          para('Bias Breakers addresses a critical problem in AI-driven hiring:'),
-          bullet('34% gender hiring gap in Indian tech \u2014 invisible until audited'),
-          bullet('5,000 research-grounded records with 6 documented bias patterns'),
-          bullet('From CSV upload to full bias audit in under 90 seconds'),
-          bullet('One-click mitigation \u2014 bias fixed before deployment'),
-          para('The platform demonstrates that fairness and accuracy are not mutually exclusive \u2014 bias can be removed with minimal accuracy tradeoff, typically less than 2%.'),
-          hr(),
-
-          // Footer
-          new Paragraph({
-            spacing: { before: 400 },
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: 'Built for Hackathon \u2014 Problem 4: Unbiased AI Decision Making | v2.0', font: 'Calibri', size: 20, color: GRAY, italics: true })],
-          }),
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: 'Generated by Bias Breakers Platform \u2014 ' + new Date().toLocaleDateString(), font: 'Calibri', size: 18, color: GRAY })],
-          }),
+          new TextRun({ text: label, font: 'Calibri', size: 22, bold: true, color: DARK }),
+          new TextRun({ text: value, font: 'Calibri', size: 22, color: GRAY }),
         ],
-      }],
-    });
+      });
 
-    const blob = await Packer.toBlob(doc);
-    saveAs(blob, 'bias_breakers_documentation.docx');
-  }
+      const tableCell = (text, opts = {}) => new TableCell({
+        width: { size: opts.width || 2400, type: WidthType.DXA },
+        shading: opts.shading ? { fill: opts.shading, type: ShadingType.CLEAR } : undefined,
+        children: [new Paragraph({
+          spacing: { before: 40, after: 40 },
+          children: [new TextRun({ text, font: 'Calibri', size: 20, bold: !!opts.bold, color: opts.color || DARK })],
+        })],
+      });
 
-</script>
+      const doc = new Document({
+        creator: 'Bias Breakers Platform',
+        title: 'Bias Breakers — AI Fairness Auditing Documentation',
+        description: 'Complete documentation for the Bias Breakers AI bias detection and mitigation platform.',
+        sections: [{
+          properties: {
+            page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } },
+          },
+          children: [
+            // Title
+            new Paragraph({
+              spacing: { after: 80 },
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: '\u2696\uFE0F Bias Breakers v2.0', font: 'Cambria', size: 48, bold: true, color: BLUE })],
+            }),
+            new Paragraph({
+              spacing: { after: 200 },
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: 'AI-Powered Bias Detection, Explanation & Mitigation Platform', font: 'Calibri', size: 24, color: GRAY, italics: true })],
+            }),
+            para('Bias Breakers detects, explains, and fixes hidden discrimination in AI hiring models \u2014 before they affect real people. It uses real ML pipelines with genuine train/test evaluation to prove bias exists and then removes it using Reweighing mitigation.'),
+            hr(),
+
+            // Quick Start
+            heading('Quick Start', HeadingLevel.HEADING_1),
+            para('Follow these steps to set up and run the project:'),
+            bullet('python -m venv venv'),
+            bullet('venv\\Scripts\\activate   (Windows)  or  source venv/bin/activate  (Linux/Mac)'),
+            bullet('pip install -r requirements.txt'),
+            bullet('python generate_dataset.py'),
+            bullet('python -m uvicorn main:app --reload'),
+            bullet('Open http://127.0.0.1:8000 in your browser'),
+            hr(),
+
+            // What It Does
+            heading('What It Does', HeadingLevel.HEADING_1),
+            new Table({
+              width: { size: 9000, type: WidthType.DXA },
+              rows: [
+                new TableRow({
+                  children: [
+                    tableCell('Step', { bold: true, shading: 'EFF6FF', width: 2000 }),
+                    tableCell('Action', { bold: true, shading: 'EFF6FF', width: 7000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('Detect', { width: 2000 }),
+                    tableCell('Computes fairness metrics (Disparate Impact, Statistical Parity Difference) on real train/test splits', { width: 7000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('Explain', { width: 2000 }),
+                    tableCell('Feature attribution pinpoints the exact cause of bias with contribution percentages', { width: 7000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('Fix', { width: 2000 }),
+                    tableCell('Reweighing mitigation adjusts sample weights \u2014 one click, bias removed before deployment', { width: 7000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('Compare', { width: 2000 }),
+                    tableCell('Side-by-side Bias Exposer shows how two identical profiles get different outcomes due to bias', { width: 7000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('Predict', { width: 2000 }),
+                    tableCell('Individual student predictor with rejection reasons, bias factors, and improvement tips', { width: 7000 }),
+                  ]
+                }),
+              ],
+            }),
+            hr(),
+
+            // Dataset
+            heading('Dataset \u2014 IndiaHire-Bias v1.0', HeadingLevel.HEADING_1),
+            para('5,000-record synthetic Indian tech hiring dataset with 6 documented bias patterns:'),
+            bullet('Gender bias \u2014 Women 34% less likely hired despite equal skills'),
+            bullet('Geographic bias \u2014 Tier-3 city candidates penalised 28%'),
+            bullet('Institution bias \u2014 Non-IIT/NIT candidates penalised 41%'),
+            bullet('Career gap penalty \u2014 Disproportionately affects women (maternity/care leave)'),
+            bullet('Referral advantage \u2014 Men receive 2x more referrals'),
+            bullet('Age bias \u2014 Candidates 38+ face 22% lower selection rate'),
+            new Paragraph({ spacing: { before: 120, after: 80 }, children: [] }),
+            boldPara('Ground truth: ', 'The actual_performance_score column proves the bias was irrational \u2014 rejected candidates performed just as well.'),
+            hr(),
+
+            // Dataset Schema
+            heading('Dataset Schema', HeadingLevel.HEADING_2),
+            new Table({
+              width: { size: 9000, type: WidthType.DXA },
+              rows: [
+                new TableRow({
+                  children: [
+                    tableCell('Feature', { bold: true, shading: 'EFF6FF', width: 2600 }),
+                    tableCell('Type', { bold: true, shading: 'EFF6FF', width: 1400 }),
+                    tableCell('Description', { bold: true, shading: 'EFF6FF', width: 3000 }),
+                    tableCell('Bias Signal', { bold: true, shading: 'EFF6FF', width: 2000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('gender', { width: 2600 }),
+                    tableCell('Binary', { width: 1400 }),
+                    tableCell('0 = Female, 1 = Male', { width: 3000 }),
+                    tableCell('Primary bias', { width: 2000, color: RED }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('state_of_origin', { width: 2600 }),
+                    tableCell('Categorical', { width: 1400 }),
+                    tableCell('Metro / Tier2 / Tier3', { width: 3000 }),
+                    tableCell('-28% Tier3', { width: 2000, color: RED }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('institution_tier', { width: 2600 }),
+                    tableCell('Categorical', { width: 1400 }),
+                    tableCell('IIT_NIT / Tier2 / Tier3', { width: 3000 }),
+                    tableCell('-41% Tier3', { width: 2000, color: RED }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('gap_years', { width: 2600 }),
+                    tableCell('Integer', { width: 1400 }),
+                    tableCell('Career gap years (maternity proxy)', { width: 3000 }),
+                    tableCell('-31% gap>=2', { width: 2000, color: RED }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('skills_score', { width: 2600 }),
+                    tableCell('Float', { width: 1400 }),
+                    tableCell('Technical assessment (0-100)', { width: 3000 }),
+                    tableCell('Fair signal', { width: 2000, color: GREEN }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('communication_score', { width: 2600 }),
+                    tableCell('Float', { width: 1400 }),
+                    tableCell('Verbal/written assessment', { width: 3000 }),
+                    tableCell('Fair signal', { width: 2000, color: GREEN }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('experience_years', { width: 2600 }),
+                    tableCell('Integer', { width: 1400 }),
+                    tableCell('Total work experience', { width: 3000 }),
+                    tableCell('Fair signal', { width: 2000, color: GREEN }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('hiring_decision', { width: 2600 }),
+                    tableCell('Binary', { width: 1400 }),
+                    tableCell('Target: 1 = Hired, 0 = Rejected', { width: 3000 }),
+                    tableCell('\u2014', { width: 2000 }),
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    tableCell('actual_performance_score', { width: 2600 }),
+                    tableCell('Float', { width: 1400 }),
+                    tableCell('Post-hire 6-month performance', { width: 3000 }),
+                    tableCell('Ground truth', { width: 2000, color: BLUE }),
+                  ]
+                }),
+              ],
+            }),
+            hr(),
+
+            // Tech Stack
+            heading('Tech Stack', HeadingLevel.HEADING_1),
+            bullet('Backend \u2014 Python 3.12, FastAPI, Pydantic'),
+            bullet('ML Engine \u2014 scikit-learn (Logistic Regression, Reweighing, Cross-Validation)'),
+            bullet('Data \u2014 pandas, numpy'),
+            bullet('Frontend \u2014 HTML5, CSS3, Vanilla JavaScript, Chart.js'),
+            bullet('Architecture \u2014 REST API, Single-Page Application'),
+            hr(),
+
+            // Project Structure
+            heading('Project Structure', HeadingLevel.HEADING_1),
+            para('bias-breakers/', { run: { bold: true, font: 'Consolas' } }),
+            bullet('main.py \u2014 FastAPI application (7 API endpoints)'),
+            bullet('bias_engine.py \u2014 ML bias detection & mitigation engine'),
+            bullet('generate_dataset.py \u2014 Synthetic dataset generator'),
+            bullet('requirements.txt \u2014 Python dependencies'),
+            bullet('commands.txt \u2014 Setup & run guide'),
+            bullet('README.md \u2014 Project readme'),
+            bullet('static/index.html \u2014 Frontend web application'),
+            bullet('datasets/indiahire_bias.csv \u2014 Generated dataset'),
+            hr(),
+
+            // API Endpoints
+            heading('API Endpoints', HeadingLevel.HEADING_1),
+            new Table({
+              width: { size: 9000, type: WidthType.DXA },
+              rows: [
+                new TableRow({
+                  children: [
+                    tableCell('Endpoint', { bold: true, shading: 'EFF6FF', width: 2500 }),
+                    tableCell('Method', { bold: true, shading: 'EFF6FF', width: 1200 }),
+                    tableCell('Description', { bold: true, shading: 'EFF6FF', width: 5300 }),
+                  ]
+                }),
+                new TableRow({ children: [tableCell('/', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Web application', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/health', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Health check with version info', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/demo', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Run full audit on IndiaHire dataset', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/predict', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Predict outcome for a single student', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/compare', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Compare two profiles side-by-side', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/batch', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Batch prediction for multiple students', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/analyze', { width: 2500 }), tableCell('POST', { width: 1200 }), tableCell('Upload and audit your own CSV dataset', { width: 5300 })] }),
+                new TableRow({ children: [tableCell('/api/dataset/stats', { width: 2500 }), tableCell('GET', { width: 1200 }), tableCell('Quick summary stats of loaded dataset', { width: 5300 })] }),
+              ],
+            }),
+            hr(),
+
+            // Key Features
+            heading('Key Features', HeadingLevel.HEADING_1),
+
+            heading('1. Bias Exposer (Scenario Comparison)', HeadingLevel.HEADING_2),
+            para('Compare two profiles \u2014 same skills, different demographics. Watch how bias changes the outcome in real time.'),
+
+            heading('2. Real ML Metrics', HeadingLevel.HEADING_2),
+            para('Genuine train/test split (75/25) with actual Accuracy, Precision, Recall, F1 Score, and 5-Fold Cross-Validation.'),
+
+            heading('3. Student Predictor', HeadingLevel.HEADING_2),
+            para('Enter any student\'s details \u2192 get biased vs fair predictions, rejection reasons explained in plain English, bias factors highlighted, and actionable improvement tips.'),
+
+            heading('4. One-Click Mitigation', HeadingLevel.HEADING_2),
+            para('Reweighing algorithm adjusts training sample weights so underrepresented groups carry equal influence. Bias removed with minimal accuracy tradeoff.'),
+
+            heading('5. Ground Truth Validation', HeadingLevel.HEADING_2),
+            para('The actual_performance_score column proves the bias was irrational \u2014 rejected women would have performed equally or better than those hired.'),
+            hr(),
+
+            // ML Pipeline
+            heading('ML Pipeline', HeadingLevel.HEADING_1),
+            para('CSV Dataset \u2192 Encode & Scale \u2192 Train/Test Split (75/25)'),
+            bullet('Biased Model: Logistic Regression trained on raw data'),
+            bullet('Fair Model: Logistic Regression trained with Reweighing sample weights'),
+            bullet('Fairness Metrics computed on both \u2192 Compare Before vs After'),
+            bullet('Visual Report with Charts, Verdicts, and Before/After panels'),
+            hr(),
+
+            // Fairness Metrics
+            heading('Fairness Metrics Explained', HeadingLevel.HEADING_1),
+
+            heading('Disparate Impact (DI)', HeadingLevel.HEADING_2),
+            para('DI = P(Hire | Female) / P(Hire | Male). Threshold: >= 0.80 (80% rule). Values below 0.80 indicate significant bias against the unprivileged group.'),
+
+            heading('Statistical Parity Difference (SPD)', HeadingLevel.HEADING_2),
+            para('SPD = P(Hire | Female) - P(Hire | Male). Ideal: 0.00. Negative values mean females are hired at a lower rate.'),
+
+            heading('Equal Opportunity Difference', HeadingLevel.HEADING_2),
+            para('Difference in True Positive Rates between groups. Measures whether qualified candidates from both groups have equal chances of being correctly identified.'),
+
+            heading('Average Odds Difference', HeadingLevel.HEADING_2),
+            para('Average of TPR difference and FPR difference between groups. A comprehensive fairness measure that considers both types of errors.'),
+            hr(),
+
+            // Reweighing Mitigation
+            heading('Reweighing Mitigation', HeadingLevel.HEADING_1),
+            para('Reweighing is a pre-processing fairness mitigation technique that adjusts the weights of training samples to ensure fair representation:'),
+            bullet('Step 1: Compute expected probability of each (group, label) combination assuming independence'),
+            bullet('Step 2: Compute observed probability of each (group, label) combination in the training data'),
+            bullet('Step 3: Weight = Expected / Observed for each sample'),
+            bullet('Step 4: Retrain the model using these sample weights'),
+            para('This ensures underrepresented group-label combinations get higher weights, compensating for historical bias.'),
+            hr(),
+
+            // Impact
+            heading('Real-World Impact', HeadingLevel.HEADING_1),
+            para('Bias Breakers addresses a critical problem in AI-driven hiring:'),
+            bullet('34% gender hiring gap in Indian tech \u2014 invisible until audited'),
+            bullet('5,000 research-grounded records with 6 documented bias patterns'),
+            bullet('From CSV upload to full bias audit in under 90 seconds'),
+            bullet('One-click mitigation \u2014 bias fixed before deployment'),
+            para('The platform demonstrates that fairness and accuracy are not mutually exclusive \u2014 bias can be removed with minimal accuracy tradeoff, typically less than 2%.'),
+            hr(),
+
+            // Footer
+            new Paragraph({
+              spacing: { before: 400 },
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: 'Built for Hackathon \u2014 Problem 4: Unbiased AI Decision Making | v2.0', font: 'Calibri', size: 20, color: GRAY, italics: true })],
+            }),
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: 'Generated by Bias Breakers Platform \u2014 ' + new Date().toLocaleDateString(), font: 'Calibri', size: 18, color: GRAY })],
+            }),
+          ],
+        }],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, 'bias_breakers_documentation.docx');
+    }
+
+  </script>
 </body>
+
 </html>
